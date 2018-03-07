@@ -1,0 +1,11 @@
+*.out
+*.o
+*.mod.*
+*/.tmp_versions/*
+.*.cmd
+*.*~
+*.txt
+.R*
+ext/Makefile
+*.so
+*.S
