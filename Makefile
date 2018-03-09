@@ -1,4 +1,4 @@
-cppflags=-fpermissive -std=c++14 -O3
+cppflags=-fpermissive -std=c++14 -O3 -lsigsegv
 
 default: page
 

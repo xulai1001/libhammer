@@ -24,7 +24,10 @@
     #define ASSERT(line) if (!(line)) { fprintf(stderr, "ASSERT error: " #line); exit(-1); }
 #endif
 #ifndef V2P_EXTERN
-extern int fd_pagemap;
+    #define V2P_EXTERN
+    int fd_pagemap = -1;
+#else
+    extern int fd_pagemap;
 #endif
 
 // note: before calling v2p, v should be in memory
