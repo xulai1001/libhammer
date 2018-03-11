@@ -10,6 +10,7 @@
 #include "map"
 #include "string"
 #include "memory"
+#include "algorithm"
 
 extern "C" {
     #include "unistd.h"
