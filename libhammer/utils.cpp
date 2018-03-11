@@ -1,12 +1,9 @@
-#ifndef _UTIL_H
-#define _UTIL_H
+#include "utils.h"
+using namespace std;
 
-#include "libhammer.h"
 extern "C" {
     #include "sigsegv.h"
 }
-
-using namespace std;
 
 // get mem/cpu info
 uint64_t get_mem_size()
@@ -57,4 +54,4 @@ int handler(void *faddr, int s)
     return 1;
 }
 */
-#endif
+

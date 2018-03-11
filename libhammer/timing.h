@@ -18,12 +18,7 @@ struct myclock {
     clk_t ticks, r0, r1;
 };
 
-#ifndef _TIMING_VARS
-#define _TIMING_VARS
-clk_t clk_freq = -1;
-#else
 extern clk_t clk_freq;
-#endif
 
 #define START_CLOCK(cl, tp) cl.type = tp; clock_gettime(cl.type, &cl.t0)
 #define END_CLOCK(cl) clock_gettime(cl.type, &cl.t1); \
@@ -65,7 +60,7 @@ extern clk_t clk_freq;
     "rdtsc \n\t" \
     "movl %%eax, %0" \
     :"=r"(_tsc)::"%rax", "%rdx")
-    
+
 #define END_TSC_LT __asm__ __volatile__ (\
     "lfence \n\t" \
     "rdtsc \n\t" \
@@ -74,66 +69,8 @@ extern clk_t clk_freq;
     :"=r"(_tsc)::"%rax", "%rdx")
 
 // baseline test
-clk_t clock_overhead(int type)
-{
-    struct myclock cl;
-    clk_t i, sum=0;
-    // warmup
-    for (i=0; i<10; ++i)
-    {
-        START_CLOCK(cl, type);
-        END_CLOCK(cl);
-        sum += cl.ns;
-    }
-    sum = 0;
-    // test
-    for (i=0; i<100; ++i)
-    {
-        START_CLOCK(cl, type);
-        END_CLOCK(cl);
-        sum += cl.ns;
-    }
-    return sum/100;
-}
-
-clk_t tsc_overhead(void)
-{
-    struct myclock cl;
-    clk_t i, sum=0;
-    //warmup
-    for (i=0; i<10; ++i)
-    {
-        START_TSC(cl);
-        END_TSC(cl);
-        sum += cl.ticks;
-    }
-    sum = 0;
-    //test
-    for (i=0; i<1000; ++i)
-    {
-        START_TSC(cl);
-        END_TSC(cl);
-        if (cl.ticks < 100)     // rule out big values
-            sum += cl.ticks;
-    }
-    return sum/1000;
-}
-
-clk_t tsc_measure_freq(void)
-{
-    struct myclock cl;
-//    printf("tsc_measure_freq...");
-    START_TSC(cl);
-    usleep(1000000);
-    END_TSC(cl);
-//    printf("%ld MHz(Mticks/sec)\n", cl.ticks / 1000000);
-    return cl.ticks;
-}
-
-clk_t tsc_to_ns(clk_t ticks)
-{
-    if (clk_freq<0) clk_freq = tsc_measure_freq();
-    return ticks * 1000000000 / clk_freq;    
-}
-
+clk_t clock_overhead(int type);
+clk_t tsc_overhead(void);
+clk_t tsc_measure_freq(void);
+clk_t tsc_to_ns(clk_t ticks);
 #endif
