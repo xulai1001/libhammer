@@ -19,7 +19,7 @@ void test_double_sided_rh()
 
     for (int row : test_rows)
     {
-        cout << "- row " << row;
+        cout << "- row " << dec << row;
 
         for (Page p : pool[row-1])
             for (Page q : pool[row+1])
@@ -45,7 +45,54 @@ void test_double_sided_rh()
                                  << "p=0x" << p.p << " q=0x" << q.p
                                  << " base=0x" << r.p << " offsets ";
                             for (int i : result)
-                                cout << i << "=" << (int)r.get<uint8_t>(i) << " ";
+                                cout << "+" << i << "=" << (int)r.get<uint8_t>(i) << " ";
+                        }
+                    }
+                    cout << "."; cout.flush();
+                }
+            }
+        cout << endl;
+    }
+}
+
+void test_single_sided_rh(int delta=-3)
+{
+    vector<int> test_rows;
+
+    for (auto it : pool)
+        if (pool.count(it.first+delta) && pool.count(it.first+1))
+            test_rows.push_back(it.first);
+    cout << "testing " << test_rows.size() << " rows" << endl;
+
+    for (int row : test_rows)
+    {
+        cout << "- row " << dec << row;
+
+        for (Page p : pool[row+delta])
+            for (Page q : pool[row+1])
+            {
+ //               cout << "here " << p.inspect() << q.inspect() << endl; cout.flush();
+                // only check when there is row conflict
+                if (is_conflict(p.v.get(), q.v.get()))
+                {
+                    // fill row with 0xff
+                    for (Page r : pool[row])
+                        r.fill();
+
+                    // hammer!
+                    hammer_loop(p.v.get(), q.v.get(), 2*1024000, 0);
+
+                    // check result
+                    for (Page r : pool[row])
+                    {
+                        auto result = r.check_bug();
+                        if (!result.empty())
+                        {
+                            cout << endl << hex
+                                 << "p=0x" << p.p << " q=0x" << q.p
+                                 << " base=0x" << r.p << " offsets ";
+                            for (int i : result)
+                                cout << "+" << i << "=" << (int)r.get<uint8_t>(i) << " ";
                         }
                     }
                     cout << "."; cout.flush();
@@ -87,6 +134,7 @@ int main(int argc, char **argv)
     cout << "- we have " << pool.size() << " rows" << endl;
 
     test_double_sided_rh();
+    //test_single_sided_rh(-7);
 
     return 0;
 }

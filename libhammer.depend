@@ -79,3 +79,77 @@
 	"utils.h"
 	"sigsegv.h"
 
+1520776106 source:/home/islab/src/libhammer/libhammer/addrmap.cpp
+	"addrmap.h"
+
+1520776106 /home/islab/src/libhammer/libhammer/addrmap.h
+	"page.h"
+
+1520776106 /home/islab/src/libhammer/libhammer/page.h
+	"libhammer.h"
+
+1520776106 /home/islab/src/libhammer/libhammer/libhammer.h
+	"iostream"
+	"sstream"
+	"cstdio"
+	"cstdlib"
+	"cstring"
+	"vector"
+	"map"
+	"string"
+	"memory"
+	"algorithm"
+	"unistd.h"
+	"errno.h"
+	"stdint.h"
+	"fcntl.h"
+	"sys/mman.h"
+	"time.h"
+	"linux/types.h"
+	"sys/stat.h"
+	"sys/sysinfo.h"
+	"sys/ipc.h"
+	"sys/shm.h"
+	"sys/types.h"
+	"sched.h"
+	"sigsegv.h"
+	"timing.h"
+	"asm.h"
+	"memory.h"
+	"page.h"
+	"addrmap.h"
+	"utils.h"
+
+1520776106 /home/islab/src/libhammer/libhammer/timing.h
+	"time.h"
+	"unistd.h"
+	"linux/types.h"
+	"stdint.h"
+
+1520776106 /home/islab/src/libhammer/libhammer/asm.h
+
+1520776106 /home/islab/src/libhammer/libhammer/memory.h
+	"asm.h"
+	"timing.h"
+	"stdint.h"
+	"stdio.h"
+	"stdlib.h"
+
+1520776106 /home/islab/src/libhammer/libhammer/utils.h
+	"libhammer.h"
+	"sigsegv.h"
+
+1520776106 source:/home/islab/src/libhammer/libhammer/memory.c
+	"memory.h"
+	"fcntl.h"
+
+1520776106 source:/home/islab/src/libhammer/libhammer/page.cpp
+	"libhammer.h"
+
+1520776106 source:/home/islab/src/libhammer/libhammer/timing.c
+	"timing.h"
+
+1520776106 source:/home/islab/src/libhammer/libhammer/utils.cpp
+	"utils.h"
+	"sigsegv.h"
+
