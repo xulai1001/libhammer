@@ -1,6 +1,8 @@
 #include "addrmap.h"
 using namespace std;
 
+AddrMap addrmap;
+
 void AddrMap::add(Page &pg)
 {
     v2p_map[pg.v.get()] = pg.p;
