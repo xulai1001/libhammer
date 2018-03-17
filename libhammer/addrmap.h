@@ -20,13 +20,17 @@ public:
 
     void *p2v(uint64_t p)
     {
-        if (p2v_map.count(p)) return p2v_map[p];
+        uint64_t offset = p & 0xfff;
+        uint64_t base = p - offset;            
+        if (p2v_map.count(base)) return p2v_map[base] + offset;
         else return 0;
     }
 
     uint64_t v2p(void *v)
     {
-        if (v2p_map.count(v)) return v2p_map[v];
+        uint64_t offset = v & 0xfff;
+        uint64_t base = v - offset;
+        if (v2p_map.count(base)) return v2p_map[base] + offset;
         else return 0;
     }
 };

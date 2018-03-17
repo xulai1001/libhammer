@@ -2,6 +2,7 @@
 #define _LFF_H
 
 #include "vector"
+#include "algorithm"
 
 #include "timing.h"
 #include "asm.h"
@@ -9,34 +10,41 @@
 #include "addrmap.h"
 
 #define L3_THRESHOLD 100
+#define MEM_THRESHOLD 400
 
-void make_eviction_list(const vector<void *> &arr)
-{
-    for (int i=0; i<arr.size()-1; ++i)
-        *((uint64_t *)arr[i]) = (uint64_t)arr[i+1];
-    *((uint64_t *)arr.back()) = 0;
-}
+// NOTE: to use LFF algorithm, the global AddrMap object must be populated first
+//------------------
+// eviction linked list
+void            make_eviction_list(const vector<void *> &arr);
+inline void     access_eviction_list(void *start);
 
-vector<uint64_t> build_offset(int cache_size_kb, int way, int slice, int n)
+// cache utils
+vector<uint64_t> build_offset(int cache_size_kb, int way, int slice, int n);
+inline int      cache_set(uint64_t pa);
+inline uint64_t change_cache_set(uint64_t pa, uint64_t pb);
+void *          change_cache_set_va(void *va, uint64_t pb);
+
+// lff algorithm
+int             lff_probe(vector<void *> &seq, void *cand);
+bool            lff_is_conflict(vector<void *> &seq, void *cand);
+// set operations
+bool            lff_is_intersect(vector<void *> &va, vector<void *> &vb); // similar to std::set_intersection, va/vb should be sorted
+void            lff_union(vector<void *> &va, vector<void *> &vb); // merge vb into (->) va. va gets bigger. va/vb should be sorted
+
+// eviction object
+class EvictionSet
 {
-    vector<uint64_t> ret; ret.resize(n);
-    int set_count = (cache_size_kb << 4) / way / slice;
-    int set_order = 32 - __builtin_clz(set_count - 1);
+public:
+    vector<vector<void *> > eset;
+    int cache_size_kb, way, slice, line_size;
+    int cache_set;
     
-    cout << "- cache: " << cache_size_kb << " kB, " << way << "-way, " << slice << " slices, "
-         << set_count << " sets, " << set_order << " set-bits." << endl;
-         
-    for (int i=0; i<n; ++i) ret[i] = i << (set_order + 6);
-}
-
-inline int cache_set(uint64_t pa) { return (pa & 0x1ffc0) >> 6; }
-inline uint64_t change_cache_set(uint64_t pa, uint64_t pb)
-{
-    return (pa & ~0x1ffc0) | (pb & 0x1ffc0);
-}
-void *change_cache_set_va(void *va, uint64_t pb)
-{
-    return addrmap.p2v(change_cache_set(addrmap.v2p(va), pb));
-}
+public:
+    void lff_build(uint64_t base_pa, int cache_size_kb, int way, int slice, int line_size);
+    void change_cache_set(uint64_t pb);
+    void change_cache_set(void *vb) { change_cache_set(addrmap.v2p(vb)); }
+    int lff_test_slice(uint64_t pa);
+    
+};
 
 #endif
