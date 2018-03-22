@@ -29,7 +29,6 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-std=c++14" />
-					<Add option="-g" />
 					<Add option="-fpermissive" />
 				</Compiler>
 				<Linker>
