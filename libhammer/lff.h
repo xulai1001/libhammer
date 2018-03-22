@@ -4,6 +4,7 @@
 #include "vector"
 #include "random"
 #include "algorithm"
+#include "sstream"
 
 #include "timing.h"
 #include "asm.h"
@@ -31,6 +32,8 @@ void *          change_cache_set_va(void *va, uint64_t pb);
 int             lff_probe(const vector<void *> &seq, void *cand);
 bool            lff_is_conflict(const vector<void *> &seq, void *cand);
 // set operations
+template <class T>
+inline void     print_vector(const vector<void *> &v, const T& tag);
 vector<void *>  exclude(const vector<void *> &seq, void *a=0, void *b=0);
 bool            lff_is_intersect(const vector<void *> &va, const vector<void *> &vb); // similar to std::set_intersection, va/vb should be sorted
 void            lff_union(vector<void *> &va, vector<void *> &vb); // merge vb into (->) va. va gets bigger. va/vb should be sorted

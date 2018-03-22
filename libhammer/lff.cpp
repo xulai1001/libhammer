@@ -117,6 +117,15 @@ void lff_union(vector<void *> &va, vector<void *> &vb)
     sort(va.begin(), va.end());
 }
 
+template <class T>
+inline void print_vector(const vector<void *> &v, const T& tag)
+{
+    stringstream ss; ss << hex << tag;
+    if (ss.str().length() > 0) cout << ss.str() << " -> ";
+    for (auto x : v) cout << hex << HASH(x) << ", ";
+    cout << endl;
+}
+
 void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int slice, int line_size)
 {
     vector<uint64_t> off = build_offset(cache_size_kb, way, slice, line_size);
@@ -173,21 +182,29 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
     {
         sort(it.second.begin(), it.second.end());
 
-        cout << hex << HASH(it.first) << " -> ";
-        for (auto x : it.second) cout << HASH(x) << ", "; cout << endl;
-
+        //print_vector(it.second, HASH(it.first));
         // use conflict_map to generate eviction sets
-        for (int i=0; i<eset.size(); ++i)
+        for (i=0; i<eset.size(); ++i)
+        {
             if (lff_is_intersect(eset[i], it.second))
             {
+                //print_vector(eset[i], i);
+                //print_vector(it.second, HASH(it.first));
+                //cout << "---" << endl;
                 lff_union(eset[i], it.second); break;
             }
+        }
 
         if (i>=eset.size())
             eset.push_back(it.second);
     }
+
+    for (auto it=eset.begin(); it!=eset.end();)
+        if (it->size()<way) eset.erase(it);
+        else ++it;
+
     cout << "----------" << endl;
-    for (int i=0; i<eset.size(); ++i)
+    for (i=0; i<eset.size(); ++i)
     {
         cout << "slice #" << dec << i << ": ";
         for (auto x : eset[i]) cout << hex << HASH(x) << ", "; cout << endl;
