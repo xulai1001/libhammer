@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1520775534 source:/home/viktor/src/libhammer/google_rowhammer.cpp
+1520923245 source:/home/viktor/src/libhammer/google_rowhammer.cpp
 	"libhammer.h"
 
 1520758277 /home/viktor/src/libhammer/libhammer.h
 	"libhammer/libhammer.h"
 
-1520768362 /home/viktor/src/libhammer/libhammer/libhammer.h
+1520924633 /home/viktor/src/libhammer/libhammer/libhammer.h
 	"iostream"
 	"sstream"
 	"cstdio"
@@ -36,6 +36,7 @@
 	"page.h"
 	"addrmap.h"
 	"utils.h"
+	"lff.h"
 
 1520768412 /home/viktor/src/libhammer/libhammer/timing.h
 	"time.h"
@@ -55,14 +56,14 @@
 1520774655 /home/viktor/src/libhammer/libhammer/page.h
 	"libhammer.h"
 
-1520768315 /home/viktor/src/libhammer/libhammer/addrmap.h
+1521639636 /home/viktor/src/libhammer/libhammer/addrmap.h
 	"page.h"
 
 1520767887 /home/viktor/src/libhammer/libhammer/utils.h
 	"libhammer.h"
 	"sigsegv.h"
 
-1520768297 source:/home/viktor/src/libhammer/libhammer/addrmap.cpp
+1520926255 source:/home/viktor/src/libhammer/libhammer/addrmap.cpp
 	"addrmap.h"
 
 1520775084 source:/home/viktor/src/libhammer/libhammer/page.cpp
@@ -152,4 +153,19 @@
 1520776106 source:/home/islab/src/libhammer/libhammer/utils.cpp
 	"utils.h"
 	"sigsegv.h"
+
+1521643474 source:/home/viktor/src/libhammer/lff.cpp
+	"libhammer.h"
+
+1521648783 /home/viktor/src/libhammer/libhammer/lff.h
+	"vector"
+	"random"
+	"algorithm"
+	"timing.h"
+	"asm.h"
+	"page.h"
+	"addrmap.h"
+
+1521648685 source:/home/viktor/src/libhammer/libhammer/lff.cpp
+	"lff.h"
 

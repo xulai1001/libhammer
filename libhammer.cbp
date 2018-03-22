@@ -21,13 +21,33 @@
 					<Add option="-lsigsegv" />
 				</Linker>
 			</Target>
+			<Target title="lff">
+				<Option output="lff" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++14" />
+					<Add option="-g" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+			</Target>
 		</Build>
-		<Compiler>
-		</Compiler>
-		<Unit filename="google_rowhammer.cpp" />
+		<Unit filename="google_rowhammer.cpp">
+			<Option target="google_rowhammer" />
+		</Unit>
+		<Unit filename="lff.cpp">
+			<Option target="lff" />
+		</Unit>
 		<Unit filename="libhammer/addrmap.cpp" />
 		<Unit filename="libhammer/addrmap.h" />
 		<Unit filename="libhammer/asm.h" />
+		<Unit filename="libhammer/lff.cpp" />
+		<Unit filename="libhammer/lff.h" />
 		<Unit filename="libhammer/libhammer.h" />
 		<Unit filename="libhammer/memory.c">
 			<Option compilerVar="CC" />

@@ -2,6 +2,7 @@
 #define _LFF_H
 
 #include "vector"
+#include "random"
 #include "algorithm"
 
 #include "timing.h"
@@ -11,6 +12,7 @@
 
 #define L3_THRESHOLD 100
 #define MEM_THRESHOLD 400
+#define SET_MASK 0x1ffc0    // 3M cache - 0ffc0, 6M cache - 1ffc0
 
 // NOTE: to use LFF algorithm, the global AddrMap object must be populated first
 //------------------
@@ -38,13 +40,15 @@ public:
     vector<vector<void *> > eset;
     int cache_size_kb, way, slice, line_size;
     int cache_set;
-    
+
 public:
     void lff_build(uint64_t base_pa, int cache_size_kb, int way, int slice, int line_size);
     void change_cache_set(uint64_t pb);
-    void change_cache_set(void *vb) { change_cache_set(addrmap.v2p(vb)); }
+    void change_cache_set(void *vb);
     int lff_test_slice(uint64_t pa);
-    
+    int lff_test_slice(void *va);
+    void test();
+
 };
 
 #endif

@@ -21,17 +21,20 @@ public:
     void *p2v(uint64_t p)
     {
         uint64_t offset = p & 0xfff;
-        uint64_t base = p - offset;            
-        if (p2v_map.count(base)) return p2v_map[base] + offset;
-        else return 0;
+        uint64_t base = p - offset;
+        void *ret = 0;
+        if (p2v_map.count(base)) ret = p2v_map[base] + offset;
+       // cout << "p2v " << hex << p << " -> " << ret << endl;
+        return ret;
     }
 
     uint64_t v2p(void *v)
     {
-        uint64_t offset = v & 0xfff;
-        uint64_t base = v - offset;
-        if (v2p_map.count(base)) return v2p_map[base] + offset;
-        else return 0;
+        uint64_t offset = (uint64_t)v & 0xfff;
+        uint64_t base = v - offset, ret = 0;
+        if (v2p_map.count((void *)base)) ret = v2p_map[(void *)base] + offset;
+       // cout << "v2p " << hex << v << " -> " << ret << endl;
+        return ret;
     }
 };
 
