@@ -10,7 +10,7 @@ int main(void)
     pages = allocate_cap(512);
     addrmap.add(pages);
 
-    eset.lff_build(pages[0].p, 3072, 12, 4, 96);
+    eset.lff_build(pages[0].p, 6144, 12, 4, 96);
     eset.test();
 
     release_pageset(pages);

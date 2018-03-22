@@ -25,7 +25,7 @@ vector<uint64_t> build_offset(int cache_size_kb, int way, int slice, int n)
          << set_count << " sets, " << set_order << " set-bits." << endl;
 
     for (int i=0; i<n; ++i) ret[i] = i << (set_order + 6);
-    random_shuffle(ret.begin(), ret.end());
+   // random_shuffle(ret.begin(), ret.end());
     return ret;
 }
 
@@ -40,7 +40,17 @@ void *change_cache_set_va(void *va, uint64_t pb)
     return addrmap.p2v(change_cache_set(addrmap.v2p(va), pb));
 }
 
-int lff_probe(vector<void *> &seq, void *cand)
+vector<void *> exclude(const vector<void *> &seq, void *a, void *b)
+{
+    vector<void *> ret;
+    ret.clear();
+    for (auto x : seq)
+        if (x != a && x != b)
+            ret.push_back(x);
+    return ret;
+}
+
+int lff_probe(const vector<void *> &seq, void *cand)
 {
     register uint64_t a;
     int ret = 999;
@@ -51,7 +61,7 @@ int lff_probe(vector<void *> &seq, void *cand)
     {
         // visit cand first
         a = (uint64_t)cand; MOV(a);
-
+        MFENCE;
         // eviction primitive
         a = (uint64_t)seq[0];
         while ((a = *(uint64_t *)a));
@@ -66,13 +76,13 @@ int lff_probe(vector<void *> &seq, void *cand)
     return ret;
 }
 
-bool lff_is_conflict(vector<void *> &seq, void *cand)
+bool lff_is_conflict(const vector<void *> &seq, void *cand)
 {
     return seq.empty() ? false : lff_probe(seq, cand) > L3_THRESHOLD;
 }
 
 // similar to std::set_intersection, va/vb should be sorted
-bool lff_is_intersect(vector<void *> &va, vector<void *> &vb)
+bool lff_is_intersect(const vector<void *> &va, const vector<void *> &vb)
 {
     int i=0, j=0;
     while (i < va.size() && j < vb.size())
@@ -138,17 +148,12 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
         if (lff_is_conflict(conflict_set, l))
         {
             vector<void *> sl;
+            sl.clear();
             sl.push_back(l);
             for (auto c : conflict_set)
             {
-                // tmp = conflict_set - [c]
-                vector<void *> tmp;
-                tmp.clear();
-                for (auto t : conflict_set)
-                    if (t!=c && t!=l) tmp.push_back(t);
-
                 // if without c, conflict disappears, then l and c are in the same slice
-                if (!lff_is_conflict(tmp, l))
+                if (!lff_is_conflict(exclude(conflict_set, c, l), l))
                     sl.push_back(c);
             }
 
@@ -205,11 +210,7 @@ int EvictionSet::lff_test_slice(uint64_t p)
 
     for (int i=0; i<eset.size(); ++i)
     {
-        vector<void *> tmp;
-        for (auto x : eset[i])
-            if (x != va) tmp.push_back(x);
-
-        t = lff_probe(tmp, va);
+        t = lff_probe(exclude(eset[i], va), va);
         if (t > max)
         {
             ret = i; max = t;

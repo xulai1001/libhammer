@@ -80,16 +80,16 @@
 	"utils.h"
 	"sigsegv.h"
 
-1520776106 source:/home/islab/src/libhammer/libhammer/addrmap.cpp
+1521181577 source:/home/islab/src/libhammer/libhammer/addrmap.cpp
 	"addrmap.h"
 
-1520776106 /home/islab/src/libhammer/libhammer/addrmap.h
+1521697569 /home/islab/src/libhammer/libhammer/addrmap.h
 	"page.h"
 
 1520776106 /home/islab/src/libhammer/libhammer/page.h
 	"libhammer.h"
 
-1520776106 /home/islab/src/libhammer/libhammer/libhammer.h
+1521181577 /home/islab/src/libhammer/libhammer/libhammer.h
 	"iostream"
 	"sstream"
 	"cstdio"
@@ -120,6 +120,7 @@
 	"page.h"
 	"addrmap.h"
 	"utils.h"
+	"lff.h"
 
 1520776106 /home/islab/src/libhammer/libhammer/timing.h
 	"time.h"
@@ -167,5 +168,23 @@
 	"addrmap.h"
 
 1521648685 source:/home/viktor/src/libhammer/libhammer/lff.cpp
+	"lff.h"
+
+1521717773 /home/islab/src/libhammer/libhammer/lff.h
+	"vector"
+	"random"
+	"algorithm"
+	"timing.h"
+	"asm.h"
+	"page.h"
+	"addrmap.h"
+
+1521697628 source:/home/islab/src/libhammer/lff.cpp
+	"libhammer.h"
+
+1520776106 /home/islab/src/libhammer/libhammer.h
+	"libhammer/libhammer.h"
+
+1521717853 source:/home/islab/src/libhammer/libhammer/lff.cpp
 	"lff.h"
 

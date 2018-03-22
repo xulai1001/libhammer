@@ -11,7 +11,7 @@
 #include "addrmap.h"
 
 #define L3_THRESHOLD 100
-#define MEM_THRESHOLD 400
+#define MEM_THRESHOLD 450
 #define SET_MASK 0x1ffc0    // 3M cache - 0ffc0, 6M cache - 1ffc0
 
 // NOTE: to use LFF algorithm, the global AddrMap object must be populated first
@@ -27,10 +27,11 @@ inline uint64_t change_cache_set(uint64_t pa, uint64_t pb);
 void *          change_cache_set_va(void *va, uint64_t pb);
 
 // lff algorithm
-int             lff_probe(vector<void *> &seq, void *cand);
-bool            lff_is_conflict(vector<void *> &seq, void *cand);
+int             lff_probe(const vector<void *> &seq, void *cand);
+bool            lff_is_conflict(const vector<void *> &seq, void *cand);
 // set operations
-bool            lff_is_intersect(vector<void *> &va, vector<void *> &vb); // similar to std::set_intersection, va/vb should be sorted
+vector<void *>  exclude(const vector<void *> &seq, void *a=0, void *b=0);
+bool            lff_is_intersect(const vector<void *> &va, const vector<void *> &vb); // similar to std::set_intersection, va/vb should be sorted
 void            lff_union(vector<void *> &va, vector<void *> &vb); // merge vb into (->) va. va gets bigger. va/vb should be sorted
 
 // eviction object
