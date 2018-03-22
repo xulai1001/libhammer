@@ -121,10 +121,12 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
 {
     vector<uint64_t> off = build_offset(cache_size_kb, way, slice, line_size);
     vector<void *> lines, conflict_set;
+    map<void *, vector<void *> > conflict_map;
     int i;
     void *l;
 
     eset.clear();
+    conflict_map.clear();
     this->cache_size_kb = cache_size_kb;
     this->way = way;
     this->slice = slice;
@@ -142,45 +144,49 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
         }
     }
 
-    // cluster other items into slices
+    // use initial conflict_set to build conflict_map, bipartite map between conflict_set and lines
     for (auto l : lines)
     {
-        if (lff_is_conflict(conflict_set, l))
+        if (lff_is_conflict(conflict_set, l))   // always true
         {
-            vector<void *> sl;
-            sl.clear();
-            sl.push_back(l);
-            for (auto c : conflict_set)
-            {
-                // if without c, conflict disappears, then l and c are in the same slice
-                if (!lff_is_conflict(exclude(conflict_set, c, l), l))
-                    sl.push_back(c);
+                    if (conflict_map.count(c) == 0)
+                    {
+                        conflict_map[c] = vector<void *>(); conflict_map[c].push_back(c);
+                    }
+                    if (conflict_map.count(l) == 0)
+                    {
+                        conflict_map[l] = vector<void *>(); conflict_map[l].push_back(l);
+                    }
+                    conflict_map[c].push_back(l);
+                    conflict_map[l].push_back(c);
             }
 
-            // merge sl into eset
-            sort(sl.begin(), sl.end());
-           // for (auto x : sl) cout << x << ","; cout << endl;
-            for (i=0; i<eset.size(); ++i)
-                if (lff_is_intersect(eset[i], sl))
-                {
-                    lff_union(eset[i], sl);
-                    break;
-                }
-
-            // if not found, add new slice
-            if (i>=eset.size())
-            {
-                eset.push_back(sl);
-            }
         }
     }
 
-    // remove small sets
-    auto it = eset.begin();
-    while (it!=eset.end())
-        if (it->size() <= way)
-            eset.erase(it);
-        else ++it;
+    for (auto it : conflict_map)
+    {
+        sort(it.second.begin(), it.second.end());
+
+        cout << hex << HASH(it.first) << " -> ";
+        for (auto x : it.second) cout << HASH(x) << ", "; cout << endl;
+
+        // use conflict_map to generate eviction sets
+        for (int i=0; i<eset.size(); ++i)
+            if (lff_is_intersect(eset[i], it.second))
+            {
+                lff_union(eset[i], it.second); break;
+            }
+
+        if (i>=eset.size())
+            eset.push_back(it.second);
+    }
+    cout << "----------" << endl;
+    for (int i=0; i<eset.size(); ++i)
+    {
+        cout << "slice #" << dec << i << ": ";
+        for (auto x : eset[i]) cout << hex << HASH(x) << ", "; cout << endl;
+    }
 
     if (eset.size() > 0)
         this->cache_set = ::cache_set(addrmap.v2p(eset[0][0]));

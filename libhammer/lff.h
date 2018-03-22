@@ -13,6 +13,7 @@
 #define L3_THRESHOLD 100
 #define MEM_THRESHOLD 450
 #define SET_MASK 0x1ffc0    // 3M cache - 0ffc0, 6M cache - 1ffc0
+#define HASH(x) (((uint64_t)x >> 16) & 0xffff)  // use bit 16-31 to mark address
 
 // NOTE: to use LFF algorithm, the global AddrMap object must be populated first
 //------------------
