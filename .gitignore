@@ -10,3 +10,4 @@ ext/Makefile
 *.so
 *.S
 page
+lff

@@ -149,6 +149,10 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
     {
         if (lff_is_conflict(conflict_set, l))   // always true
         {
+            for (auto c : conflict_set)
+            {
+                if (!lff_is_conflict(exclude(conflict_set, c, l), l))
+                {
                     if (conflict_map.count(c) == 0)
                     {
                         conflict_map[c] = vector<void *>(); conflict_map[c].push_back(c);
@@ -159,6 +163,7 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
                     }
                     conflict_map[c].push_back(l);
                     conflict_map[l].push_back(c);
+                }
             }
 
         }
