@@ -34,6 +34,28 @@
 				<Linker>
 					<Add option="-lsigsegv" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 --std=c++14 -fpermissive -S libhammer/lff.cpp" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="waylaying">
+				<Option output="waylaying" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 --std=c++14 -fpermissive -S libhammer/lff.cpp" />
+					<Mode after="always" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<Unit filename="google_rowhammer.cpp">
@@ -41,6 +63,9 @@
 		</Unit>
 		<Unit filename="lff.cpp">
 			<Option target="lff" />
+		</Unit>
+		<Unit filename="lff.s">
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="libhammer/addrmap.cpp" />
 		<Unit filename="libhammer/addrmap.h" />
@@ -60,6 +85,9 @@
 		<Unit filename="libhammer/timing.h" />
 		<Unit filename="libhammer/utils.cpp" />
 		<Unit filename="libhammer/utils.h" />
+		<Unit filename="waylaying.cpp">
+			<Option target="waylaying" />
+		</Unit>
 		<Extensions>
 			<envvars />
 			<code_completion />

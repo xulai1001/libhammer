@@ -52,27 +52,40 @@ vector<void *> exclude(const vector<void *> &seq, void *a, void *b)
 
 int lff_probe(const vector<void *> &seq, void *cand)
 {
-    register uint64_t a;
+    register uint64_t a, b;
     int ret = 999;
+    //for (auto x : seq) CLFLUSH(x);
+    //CLFLUSH(cand);
 
     make_eviction_list(seq);   // prepare linked list
 
     while (ret > MEM_THRESHOLD)
     {
-        // visit cand first
-        a = (uint64_t)cand; MOV(a);
-        MFENCE;
-        // eviction primitive
+        // reset registers
         a = (uint64_t)seq[0];
+        b = (uint64_t)cand;
+        // visit cand first
+        MOV(b); MFENCE;
+        // eviction primitive
         while ((a = *(uint64_t *)a));
-
         // measure
-        a = (uint64_t)cand;
-        START_TSC_LT;
-        MOV(a);
-        END_TSC_LT;
-        ret = _tsc;
+        __asm__ __volatile__(
+            "lfence \n\t"
+            "rdtsc \n\t"
+            "movl %%eax, %0 \n\t"
+
+            "movq (%2), %1 \n\t"
+
+            "lfence \n\t"
+            "rdtsc \n\t"
+            "subl %0, %%eax \n\t"
+            "movl %%eax, %0"
+            :"=r"(ret)
+            :"r"(a), "r"(b)
+            :"%rax", "%rdx"
+        );
     }
+   // cout << ret << endl;
     return ret;
 }
 
@@ -152,6 +165,9 @@ void EvictionSet::lff_build(uint64_t base_pa, int cache_size_kb, int way, int sl
             else lines.push_back(l);
         }
     }
+    cout << "--------" << endl;
+    print_vector(conflict_set, "cset");
+    print_vector(lines, "line");
 
     // use initial conflict_set to build conflict_map, bipartite map between conflict_set and lines
     for (auto l : lines)
