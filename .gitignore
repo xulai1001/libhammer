@@ -8,6 +8,8 @@
 .R*
 ext/Makefile
 *.so
-*.S
+*.s
 page
 lff
+memfile
+waylaying
