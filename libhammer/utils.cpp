@@ -101,3 +101,54 @@ void do_waylaying()
     munmap(memfile, mem_size+PAGE_SIZE);
 }
 
+ImageFile do_chasing(const string &path, uint64_t addr)
+{
+    uint64_t i, step=0;
+    int fd;
+    char *image;
+    unsigned sz;
+    struct stat st;
+
+    ImageFile ret;
+
+    // 1. mmap the file image with private and r/w access
+    ASSERT(-1 != (fd = open(path.c_str(), O_RDONLY)) );
+    fstat(fd, &st);
+    sz = st.st_size;
+
+    ASSERT(0 != (image = mmap(0, sz, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0)) );
+
+    ret.image = image;
+    ret.name = path;
+    ret.sz = sz;
+
+    while (addr && v2p(image) != addr)
+    {
+        // 2. fork
+        if (fork() == 0)
+        {
+            // wait some time and quit
+            usleep(10);
+            break;
+        }
+        else
+        {
+            // 3. child: write to page, then repeat
+            ++step;
+            *(uint64_t *)image = step;
+            usleep(100);
+        }
+    }
+
+    cout << "step=" << dec << step << ", pid=" << getpid() << ", image=" << hex << v2p(image) << endl; cout.flush();
+
+    if (addr && v2p(image) != addr)
+    {
+        // not last child: release. (only the last child holds the image)
+        munmap(image, sz);
+        close(fd);
+        ret.image = 0;
+    }
+    //cout << "pid=" << dec << getpid() << " finished." << endl; cout.flush();
+    return ret;
+}
