@@ -6,9 +6,8 @@ using namespace std;
 
 class Page
 {
-private:
-    char *ptr;
 public:
+    char *ptr;
     shared_ptr<char> v;
     uint64_t p, shmid;
     static uint64_t shm_index, release_count;
@@ -44,6 +43,7 @@ public:
     void wrap()
     {
         v = shared_ptr<char>(ptr, this->_release);
+        //v.reset(ptr, this->_release);
     }
 
     vector<int> check_bug(uint8_t good=0xff);

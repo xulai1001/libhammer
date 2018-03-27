@@ -46,14 +46,16 @@
 
 1513746096 /home/viktor/src/libhammer/libhammer/asm.h
 
-1520768576 /home/viktor/src/libhammer/libhammer/memory.h
+1522055981 /home/viktor/src/libhammer/libhammer/memory.h
 	"asm.h"
 	"timing.h"
 	"stdint.h"
 	"stdio.h"
 	"stdlib.h"
+	"string.h"
+	"errno.h"
 
-1520774655 /home/viktor/src/libhammer/libhammer/page.h
+1522055422 /home/viktor/src/libhammer/libhammer/page.h
 	"libhammer.h"
 
 1521639636 /home/viktor/src/libhammer/libhammer/addrmap.h
@@ -68,7 +70,7 @@
 1520926255 source:/home/viktor/src/libhammer/libhammer/addrmap.cpp
 	"addrmap.h"
 
-1520775084 source:/home/viktor/src/libhammer/libhammer/page.cpp
+1522057574 source:/home/viktor/src/libhammer/libhammer/page.cpp
 	"libhammer.h"
 
 1520775421 source:/home/viktor/src/libhammer/libhammer/memory.c
@@ -78,9 +80,10 @@
 1520767999 source:/home/viktor/src/libhammer/libhammer/timing.c
 	"timing.h"
 
-1521889522 source:/home/viktor/src/libhammer/libhammer/utils.cpp
+1521941086 source:/home/viktor/src/libhammer/libhammer/utils.cpp
 	"utils.h"
 	"sigsegv.h"
+	"sys/wait.h"
 
 1521181577 source:/home/islab/src/libhammer/libhammer/addrmap.cpp
 	"addrmap.h"
@@ -191,6 +194,9 @@
 1521717853 source:/home/islab/src/libhammer/libhammer/lff.cpp
 	"lff.h"
 
-1521889105 source:/home/viktor/src/libhammer/waylaying.cpp
+1521890055 source:/home/viktor/src/libhammer/waylaying.cpp
+	"libhammer.h"
+
+1522061979 source:/home/viktor/src/libhammer/spear.cpp
 	"libhammer.h"
 

@@ -6,6 +6,8 @@
 #include "stdint.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
+#include "errno.h"
 
 //---------------------------------
 // page select
@@ -23,7 +25,7 @@
 //---------------------------------
 // v2p with pagemap
 #ifndef ASSERT
-    #define ASSERT(line) if (!(line)) { fprintf(stderr, "ASSERT error: " #line); exit(-1); }
+    #define ASSERT(line) if (!(line)) { fprintf(stderr, "ASSERT error: " #line "\n%s\n", strerror(errno)); exit(-1); }
 #endif
 
 extern int fd_pagemap;

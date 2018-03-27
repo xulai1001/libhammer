@@ -57,6 +57,24 @@
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
+			<Target title="spear">
+				<Option output="spear" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 --std=c++14 -fpermissive -S libhammer/lff.cpp" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
 		</Build>
 		<Unit filename="google_rowhammer.cpp">
 			<Option target="google_rowhammer" />
@@ -85,6 +103,9 @@
 		<Unit filename="libhammer/timing.h" />
 		<Unit filename="libhammer/utils.cpp" />
 		<Unit filename="libhammer/utils.h" />
+		<Unit filename="spear.cpp">
+			<Option target="spear" />
+		</Unit>
 		<Unit filename="waylaying.cpp">
 			<Option target="waylaying" />
 		</Unit>

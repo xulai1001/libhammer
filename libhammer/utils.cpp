@@ -3,6 +3,7 @@ using namespace std;
 
 extern "C" {
     #include "sigsegv.h"
+    #include "sys/wait.h"
 }
 
 // get mem/cpu info
@@ -104,7 +105,7 @@ void do_waylaying()
 ImageFile do_chasing(const string &path, uint64_t addr)
 {
     uint64_t i, step=0;
-    int fd;
+    int fd, w;
     char *image;
     unsigned sz;
     struct stat st;
@@ -127,16 +128,14 @@ ImageFile do_chasing(const string &path, uint64_t addr)
         // 2. fork
         if (fork() == 0)
         {
-            // wait some time and quit
-            usleep(10);
-            break;
+            // child: write to page and continue
+            *(uint64_t *)image = ++step;
+            usleep(50);
         }
         else
         {
-            // 3. child: write to page, then repeat
-            ++step;
-            *(uint64_t *)image = step;
             usleep(100);
+            break;
         }
     }
 
