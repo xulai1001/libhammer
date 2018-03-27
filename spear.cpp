@@ -3,8 +3,20 @@
 using namespace std;
 
 uint64_t target_pa, mem_size, target_offset = 0;
-char *memfile, *target, *l, *r;
+char *memfile, *target;
 int fd;
+
+uint64_t access_time(uint64_t off)
+{
+    myclock clk;
+    volatile int x=0;
+
+    START_TSC(clk);
+    x += memfile[off];
+    END_TSC(clk);
+
+    return clk.ticks;
+}
 
 void alloc()
 {
@@ -15,19 +27,19 @@ void alloc()
     memfile = mmap(0, mem_size, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, 0);
 }
 
-void access()
+void initial_access()
 {
     volatile uint64_t tmp = 0;
     uint64_t i=0, pa;
 
-    cout << "access..." << endl;
+    cout << "initial access..." << endl;
     for (i=0; i<mem_size; i+=PAGE_SIZE)
     {
         tmp += memfile[i];
 
         if (i>0 && i % (1<<24)==0) { cout << "."; cout.flush(); }
         if (i>0 && i % (1<<30)==0) cout << dec <<(i>>30) << "G" << endl;
-
+        /*
         pa = v2p(memfile+i);
         if (pa == target_pa)
         {
@@ -36,39 +48,20 @@ void access()
             // 1. mlock() target page
             mlock(memfile+i, PAGE_SIZE);
         }
+        */
     }
     cout << endl;
 }
 
-void manipulate()
+void test_pcache_size()
 {
-    volatile uint64_t tmp = 0;
-    int64_t i, rsize;
-    // 2. assuming the target page is INACTIVE but UNEVICTABLE (mlock-ed)
-    //    cancel the original (whole) mapping
-    munmap(memfile, mem_size); memfile = 0;
-    rsize = mem_size - (target_offset + PAGE_SIZE);
+    int64_t i, t;
 
-    // 3. map the memfile again, this time in 3 parts
-    target = mmap(0, PAGE_SIZE, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, target_offset);
-    l = mmap(0, target_offset, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, 0);
-
-   // r = mmap(0, rsize, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, target_offset + PAGE_SIZE);
-   // cout << "- accessing right..." << endl;
-   // for (i=0; i<rsize; i+=PAGE_SIZE)
-   //     tmp += r[i];
-
-    cout << "- accessing left..." << endl;
-    for (i=0; i<target_offset/4; i+=PAGE_SIZE)
-        tmp += l[i];
-
-    // 4. at this time the target page is still mlock-ed. use the code below can check its pa == target_pa
-    // tmp += target[0]; cout << "+ target: " << hex << v2p(target) << endl;
-
-    // 5. unlock the page
-    cout << "- unlock target" << endl;
-    munlock(target, PAGE_SIZE);
-    munmap(target, PAGE_SIZE); target = 0;
+    for (i=mem_size - 1; i > 0; i-=(100 << 20))
+    {
+        t = access_time(i);
+        cout << dec << (i>>20)<< "M - " << t << endl;
+    }
 }
 
 void cleanup()
@@ -82,14 +75,6 @@ void cleanup()
     if (target)
     {
         munmap(target, PAGE_SIZE); target = 0;
-    }
-    if (l)
-    {
-        munmap(l, target_offset); l = 0;
-    }
-    if (r)
-    {
-        munmap(r, mem_size - (target_offset + PAGE_SIZE)); r = 0;
     }
 }
 
@@ -109,10 +94,8 @@ int main(int argc, char **argv)
 
     // equivalent to waylaying
     alloc();
-    access();
-    // magic!
-    if (target_offset)
-        manipulate();
+    initial_access();
+    test_pcache_size();
 
     cout << "---" << endl;
     cout << "path: " << fname << ", pa=" << hex << get_binary_pa(fname) << " target paddr=" << target_pa << endl;
