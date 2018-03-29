@@ -18,6 +18,7 @@ struct ImageFile {
 
 // get mem/cpu info
 uint64_t get_mem_size();
+uint64_t get_cached_mem();
 void set_cpu_affinity(int x);
 string run_cmd(const char *cmd);
 string get_cpu_model();

@@ -14,6 +14,15 @@ uint64_t get_mem_size()
     return (size_t)info.totalram * (size_t)info.mem_unit;
 }
 
+uint64_t get_cached_mem()
+{
+    stringstream ss;
+    uint64_t ret;
+    ss << run_cmd("awk '$1 == \"Cached:\" { print $2 * 1024 }' /proc/meminfo");
+    ss >> ret;
+    return ret;
+}
+
 void set_cpu_affinity(int x)
 {
     cpu_set_t mask;
