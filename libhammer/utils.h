@@ -6,6 +6,7 @@ extern "C" {
     #include "sigsegv.h"
     #include "sys/mman.h"
     #include "sys/stat.h"
+    #include "sys/wait.h"
 }
 
 using namespace std;
@@ -25,5 +26,7 @@ string get_cpu_model();
 void continuation(void *a, void *b, void *c);
 uint64_t get_binary_pa(const string &path);
 void do_waylaying();
+uint64_t v2p_once(void *v);
+void interrupt(int sig);
 ImageFile do_chasing(const string &path, uint64_t addr=0);
 #endif
