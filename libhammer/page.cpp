@@ -74,7 +74,7 @@ void Page::acquire_shared(uint64_t sid)
     // mmap
     ptr = (char *)mmap(0, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     ASSERT(ptr != MAP_FAILED);
-    ASSERT(mlock(ptr, PAGE_SIZE) != -1);
+    // ASSERT(mlock(ptr, PAGE_SIZE) != -1);
 
     // alter permissions
     close(fd);

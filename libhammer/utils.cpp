@@ -9,6 +9,15 @@ extern "C" {
 }
 
 // get mem/cpu info
+uint64_t get_meminfo(const string &key)
+{
+    stringstream cmd, ss;
+    uint64_t ret;
+    cmd << "awk '$1 == \"" << key << ":\" { print $2 * 1024 }' /proc/meminfo";
+    ss << run_cmd(cmd.str().c_str()); ss >> ret;
+    return ret;
+}
+
 uint64_t get_mem_size()
 {
     struct sysinfo info;
@@ -18,20 +27,12 @@ uint64_t get_mem_size()
 
 uint64_t get_cached_mem()
 {
-    stringstream ss;
-    uint64_t ret;
-    ss << run_cmd("awk '$1 == \"Cached:\" { print $2 * 1024 }' /proc/meminfo");
-    ss >> ret;
-    return ret;
+    return get_meminfo("Cached");
 }
 
 uint64_t get_available_mem()
 {
-    stringstream ss;
-    uint64_t ret;
-    ss << run_cmd("awk '$1 == \"MemAvailable:\" { print $2 * 1024 }' /proc/meminfo");
-    ss >> ret;
-    return ret;
+    return get_meminfo("MemAvailable");
 }
 
 void set_cpu_affinity(int x)
@@ -44,7 +45,7 @@ void set_cpu_affinity(int x)
 
 string run_cmd(const char *cmd)
 {
-    FILE* pipe;
+    static FILE* pipe;
     char buf[2048];
     stringstream ss;
     // cout << "cmd: " << cmd << endl;
@@ -100,23 +101,54 @@ uint64_t get_binary_pa(const string &path)
 void do_waylaying()
 {
     uint64_t i, mem_size = get_available_mem();
+    cout << "- Available Mem: " << dec << (mem_size / 1024000) << " MB" << endl;
+    // mem_size += 100 * 1024000;
+    uint64_t cached_count = 0, uncached_count = 0, fast_count = 0;
+    double total = mem_size / PAGE_SIZE;
     char *memfile;
     int fd;
     volatile uint64_t tmp = 0;
+    myclock clk, cl2;
 
-    cout << "- available mem size: " << dec << (mem_size / 1024000) << " M" << endl;
+   // cout << "- available page cache size: " << dec << (mem_size / 1024000) << " M" << endl;
     ASSERT(-1 != (fd = open("memfile", O_RDONLY)) );
-    ASSERT(0 != (memfile = mmap(0, mem_size+PAGE_SIZE, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, 0)) );
+    ASSERT(0 != (memfile = mmap(0, mem_size, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, 0)) );
 
-    cout << "- start eviction" << endl;
-    for (i=0; i<mem_size*0.9; i+=PAGE_SIZE)
+    // cout << "- start eviction" << endl;
+    START_CLOCK(cl2, CLOCK_MONOTONIC);
+    for (i=0; i<mem_size; i+=PAGE_SIZE)
     {
+        START_CLOCK(clk, CLOCK_MONOTONIC);
         tmp += (uint8_t)memfile[i];
+        END_CLOCK(clk);
 
-        if (i>0 && i % (1<<24)==0) { cout << "."; cout.flush(); }
-        if (i>0 && i % (1<<30)==0) cout << dec <<(i / 1024000000) << "G" << endl;
+       if (clk.ns < 150)
+            ++fast_count;
+       else if (clk.ns < 1000)
+            ++cached_count;
+       else
+            ++uncached_count;
+
+       if (i>0 && i % (1<<24)==0) {
+           if (clk.ns < 150)
+                cout << "-";
+           else if (clk.ns < 1000)
+                cout << ".";
+           else
+                cout << "+";
+           cout.flush();
+        }
+        if (i>0 && i % (1024000000ul)==0) cout << dec <<(i / 1024000000ul) << "G" << endl;
+        cout.flush();
     }
-    cout << endl; cout.flush();
+    END_CLOCK(cl2);
+    cout << endl;
+    // print statictics
+    cout << "Time: " << dec << (cl2.ns / 1000) / 1.0e6
+        << " s, Cached(Fast): " << uint64_t(fast_count * 1000 / total / 10.0)
+        << "%, Cached(Slow): " << uint64_t(cached_count * 1000 / total / 10.0)
+        << "%, Uncached: " << uint64_t(uncached_count * 1000 / total / 10.0)
+        << "%" << endl;
 
     close(fd);
     munmap(memfile, mem_size+PAGE_SIZE);
