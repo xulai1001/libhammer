@@ -8,18 +8,43 @@ using namespace std;
 vector<Page> pages;
 map<int, vector<Page> > pool;
 
+struct HammerResult
+{
+    uint64_t base, offset, p, q;
+    unsigned value, flip_to;
+
+    void print_header()
+    {
+        cout << "base,offset,p,q,value,flip_to" << endl;
+    }
+
+    void print()
+    {
+        cout << "0x" << hex << base << "," << dec << offset
+             << hex << ",0x" << p << ",0x" << q << ",0x" << value << "," << flip_to << endl;
+    }
+};
+
 void test_double_sided_rh()
 {
     vector<int> test_rows;
+    HammerResult rst;
 
     for (auto it : pool)
         if (pool.count(it.first-1) && pool.count(it.first+1))
             test_rows.push_back(it.first);
-    cout << "testing " << test_rows.size() << " rows" << endl;
+    cerr << "testing " << test_rows.size() << " rows" << endl;
+    rst.print_header();
 
     for (int row : test_rows)
     {
-        cout << "- row " << dec << row;
+        cerr << "- row " << dec << row << endl;
+
+        // create page patterns
+        for (Page p : pool[row-1])
+            p.fill(0x55);
+        for (Page q : pool[row+1])
+            q.fill(0xaa);
 
         for (Page p : pool[row-1])
             for (Page q : pool[row+1])
@@ -28,6 +53,7 @@ void test_double_sided_rh()
                 // only check when there is row conflict
                 if (is_conflict(p.v.get(), q.v.get()))
                 {
+                    // test 1-0 flip
                     // fill row with 0xff
                     for (Page r : pool[row])
                         r.fill();
@@ -38,20 +64,58 @@ void test_double_sided_rh()
                     // check result
                     for (Page r : pool[row])
                     {
-                        auto result = r.check_bug();
-                        if (!result.empty())
+                        auto result = r.check_bug();                        if (!result.empty())
                         {
-                            cout << endl << hex
+                            /*cout << endl << hex
                                  << "p=0x" << p.p << " q=0x" << q.p
                                  << " base=0x" << r.p << " offsets ";
+                                 */
                             for (int i : result)
-                                cout << "+" << i << "=" << (int)r.get<uint8_t>(i) << " ";
+                            {
+                                // cout << "+" << i << "=" << (int)r.get<uint8_t>(i) << " ";
+                                rst.base = r.p;
+                                rst.offset = i;
+                                rst.p = p.p;
+                                rst.q = q.p;
+                                rst.value = (unsigned)r.get<uint8_t>(i);
+                                rst.flip_to = 0;
+                                rst.print();
+                            }
                         }
                     }
-                    cout << "."; cout.flush();
+
+                    // test 0-1 flip
+                    // fill row with 0xff
+                    for (Page r : pool[row])
+                        r.fill(0);
+
+                    // hammer!
+                    hammer_loop(p.v.get(), q.v.get(), 1024000, 0);
+
+                    // check result
+                    for (Page r : pool[row])
+                    {
+                        auto result = r.check_bug(0);
+                        if (!result.empty())
+                        {
+                            for (int i : result)
+                            {
+                                // cout << "+" << i << "=" << (int)r.get<uint8_t>(i) << " ";
+                                rst.base = r.p;
+                                rst.offset = i;
+                                rst.p = p.p;
+                                rst.q = q.p;
+                                rst.value = (unsigned)r.get<uint8_t>(i);
+                                rst.flip_to = 1;
+                                rst.print();
+                            }
+                        }
+                    }
+
+                    cerr << "."; cout.flush();
                 }
             }
-        cout << endl;
+        cerr << endl;
     }
 }
 
@@ -130,8 +194,8 @@ int main(int argc, char **argv)
         }
         else ++it;
     }
-    cout << "- freed " << dec << Page::release_count << " pages" << endl;
-    cout << "- we have " << pool.size() << " rows" << endl;
+    cerr << "- freed " << dec << Page::release_count << " pages" << endl;
+    cerr << "- we have " << pool.size() << " rows" << endl;
 
     test_double_sided_rh();
     //test_single_sided_rh(-7);

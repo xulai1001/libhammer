@@ -29,7 +29,7 @@ void Page::_release(char *ptr)
     }
 }
 
-\
+
 // explicitly release a page
 void Page::reset()
 {
@@ -121,19 +121,19 @@ uint64_t Page::shm_index = 1, Page::release_count = 0;
 vector<Page> allocate_mb(int mb)
 {
     vector<Page> ret;
-    cout << "- allocate "<< mb << "M memory" << endl;
+    cerr << "- allocate "<< mb << "M memory" << endl;
     ret.resize(mb*256);
 
     for (int i=0; i<mb*256; ++i)
     {
         ret[i].acquire();
         // ret[i].get<int>(0) = i;  // write to the page
-        if ((i+1) % (256*16) == 0) { cout << "."; cout.flush(); }  // 16MB/1G indicator
-        if ((i+1) % (256*1024) == 0) cout << endl;
+        if ((i+1) % (256*16) == 0) { cerr << "."; cerr.flush(); }  // 16MB/1G indicator
+        if ((i+1) % (256*1024) == 0) cerr << endl;
     }
     for (int i=0; i<mb*256; ++i) ret[i].wrap();
 
-    cout << endl;
+    cerr << endl;
     sort(ret.begin(), ret.end());   // sort by paddr
 
     return ret;
@@ -177,7 +177,7 @@ vector<Page> get_contiguous_aligned_page(vector<Page> & pageset)
     for (i=st; i<st+(1<<order); ++i)
         ret.push_back(pageset[i]);
 
-    cout << "- CAP is " << ret.size() << " pages " << ret.size()/256 << " MB, paddr "
+    cerr << "- CAP is " << ret.size() << " pages " << ret.size()/256 << " MB, paddr "
          << hex << ret[0].p << "-" << ret.back().p+0xfff << endl;
     return ret;
 }
@@ -195,7 +195,7 @@ vector<Page> allocate_cap(int pageset_mb)
         {
             ++count; p.reset();
         }
-    cout << dec << count << " unused page released." << endl;
+    cerr << dec << count << " unused page released." << endl;
     return ret;
 }
 
