@@ -8,23 +8,6 @@ using namespace std;
 vector<Page> pages;
 map<int, vector<Page> > pool;
 
-struct HammerResult
-{
-    uint64_t base, offset, p, q;
-    unsigned value, flip_to;
-
-    void print_header()
-    {
-        cout << "base,offset,p,q,value,flip_to" << endl;
-    }
-
-    void print()
-    {
-        cout << "0x" << hex << base << "," << dec << offset
-             << hex << ",0x" << p << ",0x" << q << ",0x" << value << "," << flip_to << endl;
-    }
-};
-
 void test_double_sided_rh()
 {
     vector<int> test_rows;

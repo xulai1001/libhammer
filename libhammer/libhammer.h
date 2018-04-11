@@ -37,6 +37,7 @@ extern "C" {
 #include "addrmap.h"
 #include "utils.h"
 #include "lff.h"
+#include "templating.h"
 
 using namespace std;
 

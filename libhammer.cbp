@@ -57,6 +57,42 @@
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
+			<Target title="target">
+				<Option output="target" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-g" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 -S target.cpp" />
+				</ExtraCommands>
+			</Target>
+			<Target title="templating">
+				<Option output="templating" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-g" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 -S target.cpp" />
+				</ExtraCommands>
+			</Target>
 		</Build>
 		<Unit filename="google_rowhammer.cpp">
 			<Option target="google_rowhammer" />
@@ -79,6 +115,13 @@
 		<Unit filename="libhammer/memory.h" />
 		<Unit filename="libhammer/page.cpp" />
 		<Unit filename="libhammer/page.h" />
+		<Unit filename="libhammer/templating.cpp">
+			<Option target="google_rowhammer" />
+			<Option target="lff" />
+			<Option target="waylaying_new" />
+			<Option target="templating" />
+		</Unit>
+		<Unit filename="libhammer/templating.h" />
 		<Unit filename="libhammer/timing.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -90,6 +133,15 @@
 		</Unit>
 		<Unit filename="old/waylaying.cpp">
 			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="target.cpp">
+			<Option target="target" />
+		</Unit>
+		<Unit filename="target.s">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="templating.cpp">
+			<Option target="templating" />
 		</Unit>
 		<Unit filename="waylaying_new.cpp">
 			<Option target="waylaying_new" />

@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1520923245 source:/home/viktor/src/libhammer/google_rowhammer.cpp
+1523436244 source:/home/viktor/src/libhammer/google_rowhammer.cpp
 	"libhammer.h"
 
 1520758277 /home/viktor/src/libhammer/libhammer.h
 	"libhammer/libhammer.h"
 
-1520924633 /home/viktor/src/libhammer/libhammer/libhammer.h
+1523436086 /home/viktor/src/libhammer/libhammer/libhammer.h
 	"iostream"
 	"sstream"
 	"cstdio"
@@ -37,6 +37,7 @@
 	"addrmap.h"
 	"utils.h"
 	"lff.h"
+	"templating.h"
 
 1520768412 /home/viktor/src/libhammer/libhammer/timing.h
 	"time.h"
@@ -71,7 +72,7 @@
 1520926255 source:/home/viktor/src/libhammer/libhammer/addrmap.cpp
 	"addrmap.h"
 
-1523273265 source:/home/viktor/src/libhammer/libhammer/page.cpp
+1523434215 source:/home/viktor/src/libhammer/libhammer/page.cpp
 	"libhammer.h"
 
 1520775421 source:/home/viktor/src/libhammer/libhammer/memory.c
@@ -220,4 +221,21 @@
 
 1523432928 source:/home/islab/src/libhammer/google_rowhammer.cpp
 	"libhammer.h"
+
+1523440313 /home/viktor/src/libhammer/libhammer/templating.h
+	"libhammer.h"
+	"string"
+	"map"
+	"vector"
+	"fstream"
+	"sstream"
+
+1523443640 source:/home/viktor/src/libhammer/target.cpp
+	"iostream"
+
+1523441766 source:/home/viktor/src/libhammer/templating.cpp
+	"libhammer.h"
+
+1523440313 source:/home/viktor/src/libhammer/libhammer/templating.cpp
+	"templating.h"
 
