@@ -98,7 +98,7 @@
 1523430737 /home/islab/src/libhammer/libhammer/page.h
 	"libhammer.h"
 
-1521181577 /home/islab/src/libhammer/libhammer/libhammer.h
+1523444060 /home/islab/src/libhammer/libhammer/libhammer.h
 	"iostream"
 	"sstream"
 	"cstdio"
@@ -130,6 +130,7 @@
 	"addrmap.h"
 	"utils.h"
 	"lff.h"
+	"templating.h"
 
 1520776106 /home/islab/src/libhammer/libhammer/timing.h
 	"time.h"
@@ -159,7 +160,7 @@
 	"memory.h"
 	"fcntl.h"
 
-1523430737 source:/home/islab/src/libhammer/libhammer/page.cpp
+1523432969 source:/home/islab/src/libhammer/libhammer/page.cpp
 	"libhammer.h"
 
 1520776106 source:/home/islab/src/libhammer/libhammer/timing.c
@@ -237,5 +238,16 @@
 	"libhammer.h"
 
 1523440313 source:/home/viktor/src/libhammer/libhammer/templating.cpp
+	"templating.h"
+
+1523444060 /home/islab/src/libhammer/libhammer/templating.h
+	"libhammer.h"
+	"string"
+	"map"
+	"vector"
+	"fstream"
+	"sstream"
+
+1523444060 source:/home/islab/src/libhammer/libhammer/templating.cpp
 	"templating.h"
 

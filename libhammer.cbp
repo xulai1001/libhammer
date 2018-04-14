@@ -134,6 +134,9 @@
 		<Unit filename="old/waylaying.cpp">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="script/create_memfile.sh">
+			<Option target="templating" />
+		</Unit>
 		<Unit filename="target.cpp">
 			<Option target="target" />
 		</Unit>
