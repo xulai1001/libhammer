@@ -9,16 +9,15 @@ echo "Memory: $mem_mb M, half: $mem_half M, memfile: $memfile_size M"
 if ! [ -d /tmp/libhammer ]; then
     mkdir /tmp/libhammer
 fi
-pushd
-
-cd /tmp/libhammer
+pushd /tmp/libhammer
 if ! [ -d disk ]; then
     mkdir disk
 fi
 
 dd if=/dev/zero of=disk.img bs=1M count=$mem_half
 losetup /dev/loop0 disk.img
-mkfs.ext4 /dev/loop0
+mkfs.ntfs /dev/loop0
+# mkfs.ext4 /dev/loop0
 mount /dev/loop0 disk
 cd disk
 dd if=/dev/urandom of=memfile bs=1M count=$memfile_size

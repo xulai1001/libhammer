@@ -93,6 +93,24 @@
 					<Add after="g++ -O3 -S target.cpp" />
 				</ExtraCommands>
 			</Target>
+			<Target title="mem_waylaying">
+				<Option output="memway" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-g" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 -S target.cpp" />
+				</ExtraCommands>
+			</Target>
 		</Build>
 		<Unit filename="google_rowhammer.cpp">
 			<Option target="google_rowhammer" />
@@ -120,6 +138,7 @@
 			<Option target="lff" />
 			<Option target="waylaying_new" />
 			<Option target="templating" />
+			<Option target="mem_waylaying" />
 		</Unit>
 		<Unit filename="libhammer/templating.h" />
 		<Unit filename="libhammer/timing.c">
@@ -128,6 +147,9 @@
 		<Unit filename="libhammer/timing.h" />
 		<Unit filename="libhammer/utils.cpp" />
 		<Unit filename="libhammer/utils.h" />
+		<Unit filename="mem_waylaying.cpp">
+			<Option target="mem_waylaying" />
+		</Unit>
 		<Unit filename="old/spear.cpp">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
