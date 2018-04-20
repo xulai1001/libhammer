@@ -251,7 +251,23 @@
 1523444060 source:/home/islab/src/libhammer/libhammer/templating.cpp
 	"templating.h"
 
-1524122583 source:/home/islab/src/libhammer/script/check_pa.cpp
+1524136081 source:/home/islab/src/libhammer/script/check_pa.cpp
 	"iostream"
+	"sstream"
+	"string"
+	"cstdlib"
+	"vector"
 	"../libhammer.h"
+
+1524215343 source:/home/islab/src/libhammer/templating.cpp
+	"libhammer.h"
+	"set"
+
+1524226295 source:/home/islab/src/libhammer/attack.cpp
+	"iostream"
+	"sstream"
+	"string"
+	"cstdlib"
+	"vector"
+	"libhammer.h"
 

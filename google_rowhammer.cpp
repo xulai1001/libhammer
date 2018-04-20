@@ -12,16 +12,20 @@ void test_double_sided_rh()
 {
     vector<int> test_rows;
     HammerResult rst;
+    struct myclock clk;
+    int cnt=0;
 
     for (auto it : pool)
         if (pool.count(it.first-1) && pool.count(it.first+1))
             test_rows.push_back(it.first);
     cerr << "testing " << test_rows.size() << " rows" << endl;
     rst.print_header();
-
+    START_CLOCK(clk, CLOCK_MONOTONIC);
     for (int row : test_rows)
     {
-        cerr << "- row " << dec << row << endl;
+
+        cerr << "- row " << dec << row << " (" << ++cnt << " / " << test_rows.size()
+             << ") Elapsed: " << (clk.t1.tv_sec - clk.t0.tv_sec) << "s." << endl;
 
         // create page patterns
         for (Page p : pool[row-1])
@@ -99,6 +103,7 @@ void test_double_sided_rh()
                 }
             }
         cerr << endl;
+        END_CLOCK(clk);
     }
 }
 

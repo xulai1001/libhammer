@@ -129,7 +129,28 @@
 					<Add after="g++ -O3 -S target.cpp" />
 				</ExtraCommands>
 			</Target>
+			<Target title="attack">
+				<Option output="attack" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-g" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 -S target.cpp" />
+				</ExtraCommands>
+			</Target>
 		</Build>
+		<Unit filename="attack.cpp">
+			<Option target="attack" />
+		</Unit>
 		<Unit filename="google_rowhammer.cpp">
 			<Option target="google_rowhammer" />
 		</Unit>
@@ -158,6 +179,7 @@
 			<Option target="templating" />
 			<Option target="mem_waylaying" />
 			<Option target="check_pa" />
+			<Option target="attack" />
 		</Unit>
 		<Unit filename="libhammer/templating.h" />
 		<Unit filename="libhammer/timing.c">

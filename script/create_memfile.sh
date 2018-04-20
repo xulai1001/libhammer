@@ -9,7 +9,6 @@ restore="\033[0m"
 mem_mb=`awk '$1 == "MemTotal:" { print int($2 / 1024)}' /proc/meminfo`
 mem_half=$[mem_mb / 2 - mem_mb / 2 % 100]
 memfile_size=$[mem_half - 20]
-target_pa=$1
 
 echo -e $blue"- Memory: $mem_mb M, half: $mem_half M, memfile: $memfile_size M"$restore
 
@@ -57,7 +56,7 @@ remove_ramdisk()
 }
 
 #------------------------------------
-if [ $1 = "remove" ]; then
+if [ a$1 = "aremove" ]; then
     remove_ramdisk
 elif [ -e /tmp/libhammer/disk.img ]; then
     echo -e $yellow"- ramdisk already existing, use ./create_memfile remove to delete it."
