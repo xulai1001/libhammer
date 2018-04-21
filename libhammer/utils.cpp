@@ -77,7 +77,7 @@ int handler(void *faddr, int s)
 }
 */
 
-uint64_t get_binary_pa(const string &path)
+uint64_t get_binary_pa(const string &path, uint64_t offset)
 {
     int fd;
     unsigned sz;
@@ -91,45 +91,39 @@ uint64_t get_binary_pa(const string &path)
 
     ASSERT(0 != (image = mmap(0, sz, PROT_READ, MAP_PRIVATE, fd, 0)) );
     mlock(image, sz);
-    ret = v2p(image);
+    ret = v2p(image+offset);
 
+    munlock(image, sz);
     close(fd);
     munmap(image, sz);
     return ret;
 }
 
-void do_waylaying()
+void waylaying()
 {
-    uint64_t i, mem_size = get_available_mem();
-    cout << "- Available Mem: " << dec << (mem_size / 1024000) << " MB" << endl;
-    // mem_size += 100 * 1024000;
-    uint64_t cached_count = 0, uncached_count = 0, fast_count = 0;
-    double total = mem_size / PAGE_SIZE;
-    char *memfile;
+    uint64_t i, cached_ns, uncached_ns;
+    char *memfile=0;
     int fd;
+    uint64_t memfile_size;
+    struct stat st;
     volatile uint64_t tmp = 0;
     myclock clk, cl2;
 
-   // cout << "- available page cache size: " << dec << (mem_size / 1024000) << " M" << endl;
-    ASSERT(-1 != (fd = open("memfile", O_RDONLY)) );
-    ASSERT(0 != (memfile = mmap(0, mem_size, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, 0)) );
+    // open eviction file
+    ASSERT(-1 != (fd = open("/tmp/libhammer/disk/memfile", O_RDONLY | O_DIRECT)) );
+    fstat(fd, &st);
+    memfile_size = st.st_size;
+    ASSERT(0 != (memfile = mmap(0, memfile_size, PROT_READ | PROT_EXEC, MAP_PRIVATE, fd, 0)) );
 
     // cout << "- start eviction" << endl;
     START_CLOCK(cl2, CLOCK_MONOTONIC);
-    for (i=0; i<mem_size; i+=PAGE_SIZE)
+    for (i=0; i<memfile_size; i+=PAGE_SIZE)
     {
         START_CLOCK(clk, CLOCK_MONOTONIC);
-        tmp += (uint8_t)memfile[i];
+        tmp += *(volatile uint64_t *)(memfile + i);
         END_CLOCK(clk);
 
-       if (clk.ns < 150)
-            ++fast_count;
-       else if (clk.ns < 1000)
-            ++cached_count;
-       else
-            ++uncached_count;
-
-       if (i>0 && i % (1<<24)==0) {
+        if (i>0 && i % (1<<26)==0) {
            if (clk.ns < 150)
                 cout << "-";
            else if (clk.ns < 1000)
@@ -137,21 +131,61 @@ void do_waylaying()
            else
                 cout << "+";
            cout.flush();
+
         }
-        if (i>0 && i % (1024000000ul)==0) cout << dec <<(i / 1024000000ul) << "G" << endl;
-        cout.flush();
+
     }
     END_CLOCK(cl2);
     cout << endl;
-    // print statictics
-    cout << "Time: " << dec << (cl2.ns / 1000) / 1.0e6
-        << " s, Cached(Fast): " << uint64_t(fast_count * 1000 / total / 10.0)
-        << "%, Cached(Slow): " << uint64_t(cached_count * 1000 / total / 10.0)
-        << "%, Uncached: " << uint64_t(uncached_count * 1000 / total / 10.0)
-        << "%" << endl;
-
     close(fd);
-    munmap(memfile, mem_size+PAGE_SIZE);
+    munmap(memfile, memfile_size);
+}
+
+// use fadvise to do waylaying!
+void relocate_fadvise(const string& path)
+{
+    int fbin;
+    struct stat st;
+
+    ASSERT(-1 != (fbin = open(path.c_str(), O_RDONLY)) );
+    fstat(fbin, &st);
+    ASSERT(0 == posix_fadvise(fbin, 0, st.st_size, POSIX_FADV_DONTNEED));
+    close(fbin);
+}
+
+uint64_t to_mb(uint64_t b)
+{
+    return b / 1024000ull;
+}
+
+bool is_paddr_available(uint64_t pa)
+{
+    bool ret = false;
+    uint64_t avail_size, pool_size, i, tmp=0;
+
+    avail_size = get_available_mem();
+    pool_size = (uint64_t)(avail_size * 0.9);
+    pool_size -= pool_size % PAGE_SIZE;
+//    cout << blue << "- Available mem: " << _mb(avail_size) << "M, pool size: " << _mb(pool_size) << "M." << endl;
+
+    {
+        vector<Page> pool = allocate_mb(to_mb(pool_size));
+
+        for (Page pg : pool)
+        {
+            pg.get<uint64_t>(0) = pg.p; // access
+
+            if (pg.p == pa)
+            {
+                cout << "- pa=" << hex << pg.p << " is available." << endl;
+                ret = true;
+                break;
+            }
+        }
+    }
+    if (!ret) cout << "- pa=" << hex << pa << " not available." << endl;
+
+    return ret;
 }
 
 uint64_t v2p_once(void *v) {

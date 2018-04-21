@@ -63,6 +63,7 @@ vector<HammerResult> find_template(const BinaryInfo &info)
             ((r.value ^ b) == (info.orig ^ info.target)))
             {
                 ret.push_back(r);
+                is_paddr_available(r.base);
             }
     }
     cerr << "- found " << dec << ret.size() << " templates." << endl;
