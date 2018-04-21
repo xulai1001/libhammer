@@ -20,8 +20,8 @@ int main(int argc, char **argv)
     target.orig = 0x5f;
     target.target = 0x5b;
 
-    //HammerResult hr("0x5988000,2800,0x5966000,0x59ab000,0xfb,0");
-    HammerResult hr("0x3547000,2800,0x3520000,0x3564000,0xfb,0");
+    HammerResult hr("0x5988000,2800,0x5966000,0x59ab000,0xfb,0");
+    //HammerResult hr("0x3547000,2800,0x3520000,0x3564000,0xfb,0");
 
     uint64_t avail_size, pool_size, target_pa, i, tmp=0;
     Page a, b;

@@ -43,7 +43,7 @@ int main(void)
     cout << "- press key to start waylaying" << endl;
     cin >> dummy;
     //exit(0);
-    /*
+
     if (tmpl.size() > 0)
     {
         // 2. waylaying
@@ -84,7 +84,7 @@ int main(void)
     }
     cout << "* Success: target pa=0x" << hex << current_pa << ", hammer template=";
     paset[current_pa].print();
-    */
+
     cout << "- Hold the target..." << endl;
     hold_binary(target.path);
     cin >> dummy;
