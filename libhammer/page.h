@@ -10,6 +10,7 @@ public:
     char *ptr;
     shared_ptr<char> v;
     uint64_t p, shmid;
+    bool locked;
     static uint64_t shm_index, release_count;
 
 private:
@@ -18,13 +19,15 @@ private:
 
 public:
 
-    Page() : p(0), shmid(0) {}
+    Page() : p(0), shmid(0), locked(false) {}
 
     ~Page();
 
     void acquire();
     void acquire_shared(uint64_t sid=0);
     void reset();       // explicitly release a page
+    void lock();
+    void unlock();
     bool operator<(Page &b);
     bool operator==(Page &b);
     string inspect();

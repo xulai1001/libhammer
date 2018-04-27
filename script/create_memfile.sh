@@ -40,8 +40,9 @@ create_ramdisk()
     mount /dev/loop0 disk
     cd disk
 
-    echo -e $green"- create random eviction file..."$restore
-    dd if=/dev/urandom of=memfile bs=1M count=$memfile_size
+    echo -e $green"- create eviction file..."$restore
+  #  dd if=/dev/urandom of=memfile bs=1M count=$memfile_size
+    dd if=/dev/zero of=memfile bs=1M count=$memfile_size seek=$memfile_size conv=sparse
     ls -l
 
     echo -e $green"- Done."$restore
@@ -61,6 +62,8 @@ if [ a$1 = "aremove" ]; then
 elif [ -e /tmp/libhammer/disk.img ]; then
     echo -e $yellow"- ramdisk already existing, use ./create_memfile remove to delete it."
 else
+    echo -e $green"- turn off swap"$restore
+    swapoff -a
     create_dir
     pushd /tmp/libhammer
     create_ramdisk

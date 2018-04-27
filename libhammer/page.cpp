@@ -41,6 +41,7 @@ void Page::reset()
         unlink(fname);
         //printf("removing shm page file %s\n", fname);
     }
+    if (locked) unlock();
     v.reset();
 }
 
@@ -84,6 +85,18 @@ void Page::acquire_shared(uint64_t sid)
     if (getuid()==0) p = v2p(ptr);              // get phys addr when root
     // printf("+ acquire v=0x%lx, p=0x%lx, path=%s\n", (uint64_t)ptr, p, fname);
 
+}
+
+void Page::lock()
+{
+    ASSERT(mlock(ptr, PAGE_SIZE) != -1);
+    locked = true;
+}
+
+void Page::unlock()
+{
+    munlock(ptr, PAGE_SIZE);
+    locked = false;
 }
 
 bool Page::operator<(Page &b)

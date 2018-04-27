@@ -11,12 +11,13 @@ class AddrMap
 public:
     map<void *, uint64_t> v2p_map;
     map<uint64_t, void *> p2v_map;
+    map<uint64_t, Page> page_map;
 public:
 
-    void clear() { v2p_map.clear(); p2v_map.clear(); }
+    void clear() { v2p_map.clear(); p2v_map.clear(); page_map.clear(); }
     void add(Page &pg);
-
     void add(vector<Page> &pageset);
+    void add_pagemap(vector<Page> &pageset);    // use with caution. for this will add reference to shared_ptr
 
     void *p2v(uint64_t p)
     {
@@ -35,6 +36,15 @@ public:
         if (v2p_map.count((void *)base)) ret = v2p_map[(void *)base] + offset;
        // cout << "v2p " << hex << v << " -> " << ret << endl;
         return ret;
+    }
+
+    bool has_pa(uint64_t pa)
+    {
+        return (bool)p2v_map.count(pa);
+    }
+    bool has_va(void *va)
+    {
+        return (bool)v2p_map.count(va);
     }
 };
 
