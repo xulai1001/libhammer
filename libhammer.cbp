@@ -39,24 +39,6 @@
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
-			<Target title="waylaying_new">
-				<Option output="waylaying_new" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O3" />
-					<Add option="-std=c++14" />
-					<Add option="-fpermissive" />
-				</Compiler>
-				<Linker>
-					<Add option="-lsigsegv" />
-				</Linker>
-				<ExtraCommands>
-					<Add after="g++ -O3 --std=c++14 -fpermissive -S libhammer/lff.cpp" />
-					<Mode after="always" />
-				</ExtraCommands>
-			</Target>
 			<Target title="target">
 				<Option output="target" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Debug/" />
@@ -77,24 +59,6 @@
 			</Target>
 			<Target title="templating">
 				<Option output="templating" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O3" />
-					<Add option="-g" />
-					<Add option="-std=c++14" />
-					<Add option="-fpermissive" />
-				</Compiler>
-				<Linker>
-					<Add option="-lsigsegv" />
-				</Linker>
-				<ExtraCommands>
-					<Add after="g++ -O3 -S target.cpp" />
-				</ExtraCommands>
-			</Target>
-			<Target title="mem_waylaying">
-				<Option output="memway" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -175,9 +139,7 @@
 		<Unit filename="libhammer/templating.cpp">
 			<Option target="google_rowhammer" />
 			<Option target="lff" />
-			<Option target="waylaying_new" />
 			<Option target="templating" />
-			<Option target="mem_waylaying" />
 			<Option target="check_pa" />
 			<Option target="attack" />
 		</Unit>
@@ -189,7 +151,7 @@
 		<Unit filename="libhammer/utils.cpp" />
 		<Unit filename="libhammer/utils.h" />
 		<Unit filename="mem_waylaying.cpp">
-			<Option target="mem_waylaying" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="old/spear.cpp">
 			<Option target="&lt;{~None~}&gt;" />
@@ -213,7 +175,7 @@
 			<Option target="templating" />
 		</Unit>
 		<Unit filename="waylaying_new.cpp">
-			<Option target="waylaying_new" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Extensions>
 			<envvars />

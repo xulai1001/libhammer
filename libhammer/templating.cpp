@@ -63,9 +63,21 @@ vector<HammerResult> find_template(const BinaryInfo &info)
             ((r.value ^ b) == (info.orig ^ info.target)))
             {
                 ret.push_back(r);
-                is_paddr_available(r.base);
+                //is_paddr_available(r.base);
             }
     }
     cerr << "- found " << dec << ret.size() << " templates." << endl;
+    return ret;
+}
+
+vector<HammerResult> find_flips(uint64_t p, uint64_t q)
+{
+    vector<HammerResult> ret;
+    for (auto it : result_pool)
+    {
+        for (HammerResult hr : it.second)
+            if (hr.p == p && hr.q == q)
+                ret.push_back(hr);
+    }
     return ret;
 }

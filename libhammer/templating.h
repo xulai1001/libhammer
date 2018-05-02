@@ -30,5 +30,6 @@ extern map<int, vector<HammerResult> > result_pool;
 
 void load_hammer_result(const string& fname);
 vector<HammerResult> find_template(const BinaryInfo &info);
+vector<HammerResult> find_flips(uint64_t p, uint64_t q);
 
 #endif
