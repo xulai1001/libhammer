@@ -4,13 +4,14 @@ using namespace std;
 
 void HammerResult::print_header()
 {
-    cout << "base,offset,p,q,value,flip_to" << endl;
+    cout << "base,offset,p,q,value,flip_to,flips_page,flips_row" << endl;
 }
 
 void HammerResult::print()
 {
     cout << "0x" << hex << base << "," << dec << offset
-         << hex << ",0x" << p << ",0x" << q << ",0x" << value << "," << flip_to << endl;
+         << hex << ",0x" << p << ",0x" << q << ",0x" << value << "," << flip_to
+         << "," << dec << flips_page << "," << flips_row << endl;
 }
 
 HammerResult::HammerResult(const string& s)
@@ -19,6 +20,8 @@ HammerResult::HammerResult(const string& s)
     char c; //comma
     ss << s;
     ss >> hex >> base >> c >> dec >> offset >> c >> hex >> p >> c >> q >> c >> value >> c >> dec >> flip_to;
+    if (!ss.eof())
+        ss >> c >> dec >> flips_page >> c >> flips_row;
 }
 
 map<int, vector<HammerResult> > result_pool;

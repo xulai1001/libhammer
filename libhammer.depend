@@ -240,7 +240,7 @@
 1523440313 source:/home/viktor/src/libhammer/libhammer/templating.cpp
 	"templating.h"
 
-1525080703 /home/islab/src/libhammer/libhammer/templating.h
+1525258732 /home/islab/src/libhammer/libhammer/templating.h
 	"libhammer.h"
 	"string"
 	"map"
@@ -248,7 +248,7 @@
 	"fstream"
 	"sstream"
 
-1525080703 source:/home/islab/src/libhammer/libhammer/templating.cpp
+1525260697 source:/home/islab/src/libhammer/libhammer/templating.cpp
 	"templating.h"
 
 1524136081 source:/home/islab/src/libhammer/script/check_pa.cpp
@@ -271,5 +271,8 @@
 	"vector"
 	"set"
 	"map"
+	"libhammer.h"
+
+1525257669 source:/home/islab/src/libhammer/revise.cpp
 	"libhammer.h"
 

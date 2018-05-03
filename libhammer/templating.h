@@ -11,7 +11,7 @@
 struct HammerResult
 {
     uint64_t base, offset, p, q;
-    unsigned value, flip_to;
+    unsigned value, flip_to, flips_page, flips_row;
 
     HammerResult() {};
     HammerResult(const string& s);

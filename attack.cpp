@@ -122,30 +122,23 @@ int main(int argc, char **argv)
     system("swapoff -a");
 
     // 3. check availability, hold hammer pages
+    // - The HammerResult should have only 1 flips in the whole Page/Row
+    // - Test hammering on the pages, it should flip at the desired bit
     {
         vector<Page> pool = alloc_pool();
         addrmap.add(pool);
         for (HammerResult h : result_pool[target.offset & 0xfff])
-            if (addrmap.has_pa(h.p) && addrmap.has_pa(h.q) && addrmap.has_pa(h.base))
+            if (h.flips_page == 1 && h.flips_row == 1)
             {
-                vector<HammerResult> flips = find_flips(h.p, h.q);
-                /*for (HammerResult hr : flips)
+                if (addrmap.has_pa(h.p) && addrmap.has_pa(h.q) && addrmap.has_pa(h.base))
                 {
-                    cout << "\t"; hr.print();
-                }*/
-                if (flips.size() == 1)
-                {
-                    cout << green << "- Flips: " << dec << flips.size() << ", Template: "; h.print(); cout << restore;
+                    cout << green << "- Template: "; h.print(); cout << restore;
                     hrs.push_back(h);
                 }
                 else
                 {
-                    cout << yellow << "- Flips: " << dec << flips.size() << ", Template: "; h.print(); cout << restore;
+                    cout << yellow << "- Not available: "; h.print();
                 }
-            }
-            else
-            {
-                cout << yellow << "- Not available: "; h.print();
             }
         for (Page pg : pool)
         {
