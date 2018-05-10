@@ -1,4 +1,4 @@
-#!/uer/bin/python
+#!/usr/bin/python
 #-*- coding: UTF-8 -*-
 
 import re, os, sys
@@ -18,52 +18,52 @@ f_new=open("test3.txt",'w')
 #f_one=open('/home/less/tmp/'+flist[1], 'r')
 
 
-f_two=open('/home/less/tmp/'+sys.argv[1], 'r')
-f_one=open('/home/less/tmp/'+sys.argv[2], 'r')
+f_two=open(sys.argv[1], 'r')
+f_one=open(sys.argv[2], 'r')
 
 class HammerResult:
     def set(self, base, offset, p, q, value, flip_to):
         self.base=base
-	self.offset=offset
-	self.p=p
-	self.q=q
-	self.value=value
-	self.flip_to=flip_to
-   
+        self.offset=offset
+        self.p=p
+        self.q=q
+        self.value=value
+        self.flip_to=flip_to
+
     def from_str(self, s):
         l=s.split(',')
-	self.set(int(l[0],16), int(l[1]), int(l[2],16), int(l[3],16), int(l[4],16), int(l[5]))
-    
+        self.set(int(l[0],16), int(l[1]), int(l[2],16), int(l[3],16), int(l[4],16), int(l[5]))
+
     def to_str(self):
         return "0x%x, %d, 0x%x, 0x%x, 0x%x, %d" % (self.base, self.offset, self.p, self.q, self.value, self.flip_to)
-   
+
     def order(self, li):
         i=0
-	while i<len(li):
-	    if li[i].base>li[i+1].base:
-	        print "base is False"
-	        break
-	    i+=1
-	if i==len(li):
-	    print "base is True"
-        
-	i=0
-	while i<len(li)-1:
-	    if li[i].p>li[i+1].p:
-	        print "p is False"
-		break
-	    i+=1
-	if i==len(li)-1:
-	    print "p is True"
+        while i<len(li):
+            if li[i].base>li[i+1].base:
+                print "base is False"
+                break
+            i+=1
+        if i==len(li):
+            print "base is True"
 
-	i=0
-	while i<len(li)-1:
-	    if li[i].q>li[i+1].p:
-	        print "q is False"
-		break
-	    i+=1
-	if i==len(li)-1:
-	    print "q is True"
+        i=0
+        while i<len(li)-1:
+            if li[i].p>li[i+1].p:
+                print "p is False"
+                break
+            i+=1
+        if i==len(li)-1:
+            print "p is True"
+
+        i=0
+        while i<len(li)-1:
+            if li[i].q>li[i+1].p:
+                print "q is False"
+                break
+            i+=1
+        if i==len(li)-1:
+            print "q is True"
 
     #def __eq__(self, other):
         #return self.p==other.p and self.base==other.base and self.q==other.q and self.offset==other.offset and self.flip_to==other.flip_to
@@ -75,15 +75,15 @@ def mergelist(l1,l2):
     tmp=[]
     while len(l1)>0 and len(l2)>0:
         if l1[0].p<l2[0].p:
-	    tmp.append(l1[0])
-	    del l1[0]
-	elif l1[0].p==l2[0].p:
-	    tmp.append(l1[0])
-	    del l1[0]
-	    del l2[0]
-	else:
-	    tmp.append(l2[0])
-	    del l2[0]
+            tmp.append(l1[0])
+            del l1[0]
+        elif l1[0].p==l2[0].p:
+            tmp.append(l1[0])
+            del l1[0]
+            del l2[0]
+        else:
+            tmp.append(l2[0])
+            del l2[0]
     tmp.extend(l1)
     tmp.extend(l2)
     return tmp
