@@ -17,6 +17,21 @@ struct ImageFile {
     char *image;
 };
 
+class DiskUsage
+{
+public:
+    myclock clk, clk_total;
+    uint64_t value, usage;
+    string disk;
+
+private:
+    void get_diskstat();
+
+public:
+    void init(string d);
+    void update();
+};
+
 // get mem/cpu info
 uint64_t get_mem_size();
 uint64_t get_meminfo(const string &key);
