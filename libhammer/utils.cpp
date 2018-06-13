@@ -13,9 +13,9 @@ uint64_t get_meminfo(const string &key)
 {
     stringstream cmd, ss;
     uint64_t ret;
-    cmd << "awk '$1 == \"" << key << ":\" { print $2 * 1024 }' /proc/meminfo";
+    cmd << "awk '$1 == \"" << key << ":\" { print $2 }' /proc/meminfo";
     ss << run_cmd(cmd.str().c_str()); ss >> ret;
-    return ret;
+    return ret * 1024;
 }
 
 uint64_t get_mem_size()

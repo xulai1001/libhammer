@@ -48,5 +48,6 @@ uint64_t to_mb(uint64_t b);
 bool is_paddr_available(uint64_t pa);
 uint64_t v2p_once(void *v);
 void interrupt(int sig);
+void interrupt_child(int sig);
 ImageFile do_chasing(const string &path, uint64_t addr=0);
 #endif
