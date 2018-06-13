@@ -7,7 +7,7 @@ const string disk_name = "sda4";
 const string binary_path = "../target";
 const string vanilla_path = "memfile";
 const string memway_path = "/tmp/libhammer/disk/memfile";
-const int max_mb = 7300;
+const int max_mb = 4200;
 
 // test_mb, avail_mb, max_read_ns, last_disk_load, total_time, is_evict
 void waylaying_test(string path, int mb, bool warmup)
