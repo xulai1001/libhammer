@@ -8,13 +8,13 @@ const string binary_path = "../target";
 const string vanilla_path = "memfile";
 const string memway_path = "/tmp/libhammer/disk/memfile";
 const int max_mb = 4200;
-
+int avail_mb;
 // test_mb, avail_mb, max_read_ns, last_disk_load, total_time, is_evict
-void waylaying_test(string path, int mb, bool warmup)
+void waylaying_test(string path, uint64_t mb, bool warmup)
 {
     uint64_t i, cached_ns, uncached_ns;
     char *memfile=0;
-    int fd, avail_mb, read_ns=0, last_disk_load;
+    int fd, read_ns=0, last_disk_load;
     uint64_t memfile_size, binpa, binpa2;
     struct stat st;
     volatile uint64_t tmp = 0;
@@ -50,22 +50,25 @@ void waylaying_test(string path, int mb, bool warmup)
         du.init(disk_name);
         for (i=0; i<memfile_size; i+=PAGE_SIZE)
         {
-            if (i > ((uint64_t)mb << 20)) break;
+            if (i > (mb << 20)) break;
             START_CLOCK(clk, CLOCK_MONOTONIC);
             tmp += *(volatile uint64_t *)(memfile + i);
             END_CLOCK(clk);
 
-            if (i>((uint64_t)(mb - 100) << 20) && i % (20 * (1<<20))==0) {
+            if (i==((mb-50) << 20))
+            {
                 du.update();
-                read_ns = clk.ns; cout << dec << read_ns << " "; cout.flush();
+                read_ns = 0;
+            }
+            if (i>((mb-10) << 20)) {
+                if (clk.ns > read_ns) read_ns = clk.ns;
             }
         }
-        cout << endl;
+        //cout << endl;
         du.update();
         last_disk_load = du.usage;
         END_CLOCK(cl2);
         // test_mb, avail_mb, read_ns, last_disk_load, total_time, is_evict
-        avail_mb = get_available_mem() / 1024000;
         binpa2 = get_binary_pa(binary_path, 0);
         // cout << hex << binpa << " " << binpa2 << endl;
         cout << "test_mb=" << dec << mb
@@ -83,14 +86,22 @@ void waylaying_test(string path, int mb, bool warmup)
 int main(void)
 {
     const string pth = vanilla_path;
+    avail_mb = get_available_mem() / 1024000;
+    int mb;
+
     waylaying_test(pth, max_mb, true);
-    waylaying_test(pth, max_mb/2, true);
-    for (int mb = 50; mb < max_mb; mb+=50)
+    waylaying_test(pth, avail_mb - 100, true);
+    waylaying_test(pth, avail_mb - 100, true);
+    waylaying_test(pth, 200, true);
+    for (mb = 50; mb < avail_mb-150; mb+=50)
     {
-    //    waylaying_test(pth, mb, true);
-        for (int i=0; i<1; ++i)
+        for (int i=0; i<3; ++i)
             waylaying_test(pth, mb, false);
     }
+
+    for (mb; mb < avail_mb + 100; mb+=10)
+        for (int i=0; i<10; ++i)
+        waylaying_test(pth, mb, false);
     return 0;
 }
 

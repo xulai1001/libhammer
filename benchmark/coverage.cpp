@@ -41,8 +41,8 @@ void waylaying_test(string path)
         tmp += *(volatile uint64_t *)(memfile + i);
         END_CLOCK(clk);
 
-        if (i>((uint64_t)(memfile_size - 100) << 20) && i % (20 * (1<<20))==0) {
-            du.update();
+        if (i == ((uint64_t)(memfile_size - 100) << 20)) {
+            du.update();    // only collect last 100M
         }
         if (i % (100 * (1<<20)) == 0)
         {
