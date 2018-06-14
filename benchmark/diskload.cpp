@@ -85,14 +85,16 @@ void waylaying_test(string path, uint64_t mb, bool warmup)
 
 int main(void)
 {
-    const string pth = vanilla_path;
+    const string pth = memway_path;
     avail_mb = get_available_mem() / 1024000;
     int mb;
 
     waylaying_test(pth, max_mb, true);
     waylaying_test(pth, avail_mb - 100, true);
     waylaying_test(pth, avail_mb - 100, true);
-    waylaying_test(pth, 200, true);
+    waylaying_test(pth, 400, true);
+    waylaying_test(pth, 400, true);
+    waylaying_test(pth, 400, true);
     for (mb = 50; mb < avail_mb-150; mb+=50)
     {
         for (int i=0; i<3; ++i)

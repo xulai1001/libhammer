@@ -70,15 +70,35 @@ void waylaying_test(string path)
 
 void fadvise_test(const string path)
 {
+    static int step = 0;
     myclock clk;
     START_CLOCK(clk, CLOCK_MONOTONIC);
     relocate_fadvise(path);
-    END_CLOCK(clk);
     uint64_t binpa = get_binary_pa(binary_path, 0);
     paset.insert(binpa);
-    cout << "time=" << dec << ((clk.ns / 1000000) / 1000.0)
+    END_CLOCK(clk);
+    cout << "step=" << dec << ++step
+         << ", time=" << dec << (clk.ns / 100000) / 10.0 << " ms"
+         << ", coverage=" << dec << paset.size() << " / " << avail_mb * 256
          << ", addr=" << hex << binpa
-         << ", coverage=" << dec << paset.size()/256 << " / " << avail_mb
+         << endl;
+}
+
+void memway_test(const string path)
+{
+    static int step = 0;
+    int last_size = 0;
+    myclock clk;
+    START_CLOCK(clk, CLOCK_MONOTONIC);
+    relocate_fadvise(path);
+    uint64_t binpa = get_binary_pa(binary_path, 0);
+    last_size = paset.size();
+    paset.insert(binpa);
+    END_CLOCK(clk);
+    cout << "step=" << dec << ++step
+         << ", time=" << dec << (clk.ns / 100000) / 10.0 << " ms"
+         << ", coverage=" << dec << paset.size() << " / " << avail_mb * 256
+         << ", addr=" << hex << binpa
          << endl;
 }
 
@@ -89,6 +109,7 @@ void chasing_test(const string &path)
     char *image;
     unsigned sz;
     struct stat st;
+    struct myclock clk;
     const uint64_t free_mb = avail_mb;
     const int master_pgid = getpgid(0);
 
@@ -103,6 +124,7 @@ void chasing_test(const string &path)
 
     while (true)
     {
+        START_CLOCK(clk, CLOCK_MONOTONIC);
         // 2. fork
         if (fork() != 0)
         {
@@ -112,10 +134,14 @@ void chasing_test(const string &path)
             // insert into set
             pa = v2p_once(image);
             paset.insert(pa);
+            END_CLOCK(clk);
             // analyse
             cout << "step=" << dec << step
-                 << ", image=" << hex << pa
-                 << ", coverage=" << dec << paset.size()/256 << " / " << avail_mb << endl;
+                 << "time=" << (clk.ns / 1000) << " us"
+                 << ", coverage=" << dec << paset.size() << " / " << avail_mb*256
+                 << ", addr=" << hex << pa
+                 << endl;
+
             usleep(1000);
         }
         else
@@ -145,17 +171,14 @@ void chasing_test(const string &path)
 
 int main(void)
 {
-    const string pth = vanilla_path;
+    const string pth = memway_path;
     avail_mb = get_available_mem() / 1024000;
-    myclock clk;
-    START_CLOCK(clk, CLOCK_MONOTONIC);
-    for (int i = 0; i<10; ++i)
+    while (true)
     {
-        //fadvise_test(binary_path);
+        fadvise_test(binary_path);
         //waylaying_test(pth);
-
     }
-    chasing_test(binary_path);
+   // chasing_test(binary_path);
     return 0;
 }
 
