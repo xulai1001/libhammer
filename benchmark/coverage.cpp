@@ -24,6 +24,7 @@ void waylaying_test(string path)
     myclock clk, cl2;
     DiskUsage du;
 
+    uint64_t mb = avail_mb;
     // open eviction file
     ASSERT(-1 != (fd = open(path.c_str(), O_RDONLY | O_DIRECT)) );
     fstat(fd, &st);
@@ -35,13 +36,13 @@ void waylaying_test(string path)
     binpa = get_binary_pa(binary_path, 0);
     du.init(disk_name);
     cout << "- waylaying...";
-    for (i=0; i<memfile_size; i+=PAGE_SIZE)
+    for (i=0; i<(mb<<20); i+=PAGE_SIZE)
     {
         START_CLOCK(clk, CLOCK_MONOTONIC);
         tmp += *(volatile uint64_t *)(memfile + i);
         END_CLOCK(clk);
 
-        if (i == ((uint64_t)(memfile_size - 100) << 20)) {
+        if (i == ((mb - 200) << 20)) {
             du.update();    // only collect last 100M
         }
         if (i % (100 * (1<<20)) == 0)
@@ -49,7 +50,7 @@ void waylaying_test(string path)
             cout << "."; cout.flush();
         }
     }
-    cout << endl;
+    //cout << endl;
     du.update();
     last_disk_load = du.usage;
     END_CLOCK(cl2);
@@ -57,8 +58,7 @@ void waylaying_test(string path)
     avail_mb = get_available_mem() / 1024000;
     binpa2 = get_binary_pa(binary_path, 0);
     // cout << hex << binpa << " " << binpa2 << endl;
-    cout << "test_mb=" << dec << (memfile_size / 1024000)
-         << ", avail_mb=" << avail_mb
+    cout << "avail_mb=" << dec << avail_mb
          << ", disk_load=" << (last_disk_load / 10.0)
          << ", time=" << ((cl2.ns / 1000000) / 1000.0)
          << ", addr=" << hex << binpa2
@@ -72,8 +72,10 @@ void fadvise_test(const string path)
 {
     static int step = 0;
     myclock clk;
+    avail_mb = get_available_mem() / 1024000;
     START_CLOCK(clk, CLOCK_MONOTONIC);
-    relocate_fadvise(path);
+    //relocate_fadvise(path);
+    waylaying_test(memway_path);
     uint64_t binpa = get_binary_pa(binary_path, 0);
     paset.insert(binpa);
     END_CLOCK(clk);
@@ -87,13 +89,25 @@ void fadvise_test(const string path)
 void memway_test(const string path)
 {
     static int step = 0;
-    int last_size = 0;
+    static int last_size, repeat=0;
     myclock clk;
+    avail_mb = get_available_mem() / 1024000;
     START_CLOCK(clk, CLOCK_MONOTONIC);
     relocate_fadvise(path);
     uint64_t binpa = get_binary_pa(binary_path, 0);
     last_size = paset.size();
     paset.insert(binpa);
+    if (paset.size() == last_size)
+    {
+        ++repeat;
+        if (repeat > 6)
+        {
+            repeat = 0;
+            waylaying_test(memway_path);
+        }
+    }
+    else
+        repeat = 0;
     END_CLOCK(clk);
     cout << "step=" << dec << ++step
          << ", time=" << dec << (clk.ns / 100000) / 10.0 << " ms"
@@ -112,6 +126,7 @@ void chasing_test(const string &path)
     struct myclock clk;
     const uint64_t free_mb = avail_mb;
     const int master_pgid = getpgid(0);
+    int last_size = 0, repeat = 0;
 
     // 1. mmap the file image with private and r/w access
     ASSERT(-1 != (fd = open(path.c_str(), O_RDONLY)) );
@@ -132,12 +147,25 @@ void chasing_test(const string &path)
             // any write to shared page will cause relocation, either from parent or child. so parent write is also OK.
             *(volatile uint64_t *)image = ++step;
             // insert into set
-            pa = v2p_once(image);
+            pa = v2p(image);
+            last_size = paset.size();
             paset.insert(pa);
+            if (paset.size() == last_size)
+            {
+                ++repeat;
+                if (repeat > 6)
+                {
+                    repeat = 0;
+                    waylaying_test(memway_path);
+                }
+            }
+            else
+                repeat = 0;
+
             END_CLOCK(clk);
             // analyse
             cout << "step=" << dec << step
-                 << "time=" << (clk.ns / 1000) << " us"
+                 << ", time=" << (clk.ns / 1000) << " us"
                  << ", coverage=" << dec << paset.size() << " / " << avail_mb*256
                  << ", addr=" << hex << pa
                  << endl;
@@ -173,12 +201,16 @@ int main(void)
 {
     const string pth = memway_path;
     avail_mb = get_available_mem() / 1024000;
+
+/*
     while (true)
     {
-        fadvise_test(binary_path);
+        //fadvise_test(binary_path);
         //waylaying_test(pth);
+        //memway_test(binary_path);
     }
-   // chasing_test(binary_path);
+*/
+    chasing_test(binary_path);
     return 0;
 }
 

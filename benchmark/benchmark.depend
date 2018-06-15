@@ -404,3 +404,10 @@
 	"fstream"
 	"sstream"
 
+1529043535 source:/home/islab/src/libhammer/benchmark/coverage.cpp
+	"iostream"
+	"string"
+	"sstream"
+	"set"
+	"libhammer.h"
+
