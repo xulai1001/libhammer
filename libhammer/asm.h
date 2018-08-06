@@ -52,6 +52,7 @@
 
 #define PREFETCH_L3(a) __asm__ __volatile__(\
     "prefetcht2 (%0) \n\t" \
+    "prefetchnta (%0) \n\t" \
     : :"r"(a))
 
 #endif

@@ -126,6 +126,26 @@
 					<Add option="-lsigsegv" />
 				</Linker>
 			</Target>
+			<Target title="prefetch">
+				<Option output="prefetch/pftest" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="prefetch" />
+				<Option object_output="/home/islab/src/libhammer/.objs" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-g" />
+					<Add option="-std=c++14" />
+					<Add option="-fpermissive" />
+				</Compiler>
+				<Linker>
+					<Add option="-lsigsegv" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="g++ -O3 -fpermissive --std=c++0x -S prefetch/pftest.cpp -o prefetch/pftest.S" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
 		</Build>
 		<Unit filename="attack.cpp">
 			<Option target="attack" />
@@ -158,6 +178,7 @@
 			<Option target="check_pa" />
 			<Option target="attack" />
 			<Option target="revise" />
+			<Option target="prefetch" />
 		</Unit>
 		<Unit filename="libhammer/templating.h" />
 		<Unit filename="libhammer/timing.c">
@@ -174,6 +195,9 @@
 		</Unit>
 		<Unit filename="old/waylaying.cpp">
 			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="prefetch/pftest.cpp">
+			<Option target="prefetch" />
 		</Unit>
 		<Unit filename="revise.cpp">
 			<Option target="revise" />
