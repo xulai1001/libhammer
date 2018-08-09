@@ -184,11 +184,62 @@ _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv:
 .LCOLDE6:
 	.section	.text._ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv,"axG",@progbits,_ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv,comdat
 .LHOTE6:
+	.section	.text.unlikely,"ax",@progbits
+.LCOLDB7:
+	.text
+.LHOTB7:
+	.p2align 4,,15
+	.type	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.constprop.24, @function
+_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.constprop.24:
+.LFB9950:
+	.cfi_startproc
+	movq	_ZSt4cout(%rip), %rax
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	movq	-24(%rax), %rax
+	movq	_ZSt4cout+240(%rax), %rbx
+	testq	%rbx, %rbx
+	je	.L28
+	cmpb	$0, 56(%rbx)
+	je	.L23
+	movzbl	67(%rbx), %eax
+.L24:
+	movl	$_ZSt4cout, %edi
+	movsbl	%al, %esi
+	call	_ZNSo3putEc
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 8
+	movq	%rax, %rdi
+	jmp	_ZNSo5flushEv
+.L23:
+	.cfi_restore_state
+	movq	%rbx, %rdi
+	call	_ZNKSt5ctypeIcE13_M_widen_initEv
+	movq	(%rbx), %rax
+	movq	48(%rax), %rdx
+	movl	$10, %eax
+	cmpq	$_ZNKSt5ctypeIcE8do_widenEc, %rdx
+	je	.L24
+	movl	$10, %esi
+	movq	%rbx, %rdi
+	call	*%rdx
+	jmp	.L24
+.L28:
+	call	_ZSt16__throw_bad_castv
+	.cfi_endproc
+.LFE9950:
+	.size	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.constprop.24, .-_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.constprop.24
+	.section	.text.unlikely
+.LCOLDE7:
+	.text
+.LHOTE7:
 	.section	.text.unlikely._ZN4Page4wrapEv,"axG",@progbits,_ZN4Page4wrapEv,comdat
 	.align 2
-.LCOLDB7:
+.LCOLDB8:
 	.section	.text._ZN4Page4wrapEv,"axG",@progbits,_ZN4Page4wrapEv,comdat
-.LHOTB7:
+.LHOTB8:
 	.align 2
 	.p2align 4,,15
 	.weak	_ZN4Page4wrapEv
@@ -221,13 +272,13 @@ _ZN4Page4wrapEv:
 	movq	$_ZN4Page8_releaseEPc, 16(%rax)
 	movq	%rax, 16(%rbx)
 	testq	%rbp, %rbp
-	je	.L21
+	je	.L29
 	movl	$_ZL28__gthrw___pthread_key_createPjPFvPvE, %eax
 	testq	%rax, %rax
-	je	.L26
+	je	.L34
 	lock subl	$1, 8(%rbp)
-	je	.L36
-.L21:
+	je	.L44
+.L29:
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 24
@@ -238,31 +289,31 @@ _ZN4Page4wrapEv:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L26:
+.L34:
 	.cfi_restore_state
 	movl	8(%rbp), %eax
 	leal	-1(%rax), %edx
 	cmpl	$1, %eax
 	movl	%edx, 8(%rbp)
-	jne	.L21
+	jne	.L29
 	movq	0(%rbp), %rax
 	movq	%rbp, %rdi
 	call	*16(%rax)
 	movl	12(%rbp), %eax
 	leal	-1(%rax), %edx
 	movl	%edx, 12(%rbp)
-	jmp	.L30
+	jmp	.L38
 	.p2align 4,,10
 	.p2align 3
-.L36:
+.L44:
 	movq	0(%rbp), %rax
 	movq	%rbp, %rdi
 	call	*16(%rax)
 	movl	$-1, %eax
 	lock xaddl	%eax, 12(%rbp)
-.L30:
+.L38:
 	cmpl	$1, %eax
-	jne	.L21
+	jne	.L29
 	movq	0(%rbp), %rax
 	movq	%rbp, %rdi
 	movq	24(%rax), %rax
@@ -274,9 +325,9 @@ _ZN4Page4wrapEv:
 	popq	%rbp
 	.cfi_def_cfa_offset 8
 	jmp	*%rax
-.L32:
+.L40:
 	.cfi_restore_state
-.L24:
+.L32:
 	movq	%rax, %rdi
 	call	__cxa_begin_catch
 	movq	%rbp, %rdi
@@ -284,9 +335,9 @@ _ZN4Page4wrapEv:
 	call	_ZN4Page8_releaseEPc
 	call	__cxa_rethrow
 .LEHE1:
-.L31:
+.L39:
 	movq	%rax, %rbx
-.L25:
+.L33:
 	call	__cxa_end_catch
 	movq	%rbx, %rdi
 .LEHB2:
@@ -306,11 +357,11 @@ _ZN4Page4wrapEv:
 .LLSDACSB9148:
 	.uleb128 .LEHB0-.LFB9148
 	.uleb128 .LEHE0-.LEHB0
-	.uleb128 .L32-.LFB9148
+	.uleb128 .L40-.LFB9148
 	.uleb128 0x1
 	.uleb128 .LEHB1-.LFB9148
 	.uleb128 .LEHE1-.LEHB1
-	.uleb128 .L31-.LFB9148
+	.uleb128 .L39-.LFB9148
 	.uleb128 0
 	.uleb128 .LEHB2-.LFB9148
 	.uleb128 .LEHE2-.LEHB2
@@ -326,13 +377,13 @@ _ZN4Page4wrapEv:
 	.section	.text._ZN4Page4wrapEv,"axG",@progbits,_ZN4Page4wrapEv,comdat
 	.size	_ZN4Page4wrapEv, .-_ZN4Page4wrapEv
 	.section	.text.unlikely._ZN4Page4wrapEv,"axG",@progbits,_ZN4Page4wrapEv,comdat
-.LCOLDE7:
+.LCOLDE8:
 	.section	.text._ZN4Page4wrapEv,"axG",@progbits,_ZN4Page4wrapEv,comdat
-.LHOTE7:
-	.section	.text.unlikely,"ax",@progbits
-.LCOLDB8:
+.LHOTE8:
+	.section	.text.unlikely
+.LCOLDB9:
 	.text
-.LHOTB8:
+.LHOTB9:
 	.p2align 4,,15
 	.globl	_Z6warmupv
 	.type	_Z6warmupv, @function
@@ -344,16 +395,16 @@ _Z6warmupv:
 .LFE9275:
 	.size	_Z6warmupv, .-_Z6warmupv
 	.section	.text.unlikely
-.LCOLDE8:
+.LCOLDE9:
 	.text
-.LHOTE8:
+.LHOTE9:
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.LC9:
+.LC10:
 	.string	" "
 	.section	.text.unlikely
-.LCOLDB10:
+.LCOLDB11:
 	.text
-.LHOTB10:
+.LHOTB11:
 	.p2align 4,,15
 	.globl	_Z10test_no_pfv
 	.type	_Z10test_no_pfv, @function
@@ -373,10 +424,10 @@ _Z10test_no_pfv:
 	.cfi_offset 3, -32
 	movq	p+8(%rip), %r12
 	testl	%eax, %eax
-	jle	.L42
+	jle	.L50
 	.p2align 4,,10
 	.p2align 3
-.L47:
+.L55:
 #APP
 # 32 "prefetch/pftest.cpp" 1
 	clflush (%r12) 
@@ -411,21 +462,21 @@ _Z10test_no_pfv:
 	movq	%rsi, clk+48(%rip)
 	call	_ZNSo9_M_insertImEERSoT_
 	movl	$1, %edx
-	movl	$.LC9, %esi
+	movl	$.LC10, %esi
 	movq	%rax, %rdi
 	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
 	cmpl	%ebp, ntime(%rip)
-	jg	.L47
-.L42:
+	jg	.L55
+.L50:
 	movq	_ZSt4cout(%rip), %rax
 	movq	-24(%rax), %rax
 	movq	_ZSt4cout+240(%rax), %rbp
 	testq	%rbp, %rbp
-	je	.L53
+	je	.L61
 	cmpb	$0, 56(%rbp)
-	je	.L44
+	je	.L52
 	movsbl	67(%rbp), %esi
-.L45:
+.L53:
 	movl	$_ZSt4cout, %edi
 	call	_ZNSo3putEc
 	popq	%rbx
@@ -439,7 +490,7 @@ _Z10test_no_pfv:
 	jmp	_ZNSo5flushEv
 	.p2align 4,,10
 	.p2align 3
-.L44:
+.L52:
 	.cfi_restore_state
 	movq	%rbp, %rdi
 	call	_ZNKSt5ctypeIcE13_M_widen_initEv
@@ -447,24 +498,24 @@ _Z10test_no_pfv:
 	movl	$10, %esi
 	movq	48(%rax), %rax
 	cmpq	$_ZNKSt5ctypeIcE8do_widenEc, %rax
-	je	.L45
+	je	.L53
 	movq	%rbp, %rdi
 	call	*%rax
 	movsbl	%al, %esi
-	jmp	.L45
-.L53:
+	jmp	.L53
+.L61:
 	call	_ZSt16__throw_bad_castv
 	.cfi_endproc
 .LFE9276:
 	.size	_Z10test_no_pfv, .-_Z10test_no_pfv
 	.section	.text.unlikely
-.LCOLDE10:
+.LCOLDE11:
 	.text
-.LHOTE10:
+.LHOTE11:
 	.section	.text.unlikely
-.LCOLDB11:
+.LCOLDB12:
 	.text
-.LHOTB11:
+.LHOTB12:
 	.p2align 4,,15
 	.globl	_Z7test_pfv
 	.type	_Z7test_pfv, @function
@@ -484,10 +535,10 @@ _Z7test_pfv:
 	.cfi_def_cfa_offset 32
 	.cfi_offset 3, -32
 	testl	%eax, %eax
-	jle	.L58
+	jle	.L66
 	.p2align 4,,10
 	.p2align 3
-.L63:
+.L71:
 #APP
 # 48 "prefetch/pftest.cpp" 1
 	clflush (%rbp) 
@@ -537,21 +588,21 @@ _Z7test_pfv:
 	movq	%rsi, clk+48(%rip)
 	call	_ZNSo9_M_insertImEERSoT_
 	movl	$1, %edx
-	movl	$.LC9, %esi
+	movl	$.LC10, %esi
 	movq	%rax, %rdi
 	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
 	cmpl	%r12d, ntime(%rip)
-	jg	.L63
-.L58:
+	jg	.L71
+.L66:
 	movq	_ZSt4cout(%rip), %rax
 	movq	-24(%rax), %rax
 	movq	_ZSt4cout+240(%rax), %rbp
 	testq	%rbp, %rbp
-	je	.L69
+	je	.L77
 	cmpb	$0, 56(%rbp)
-	je	.L60
+	je	.L68
 	movsbl	67(%rbp), %esi
-.L61:
+.L69:
 	movl	$_ZSt4cout, %edi
 	call	_ZNSo3putEc
 	popq	%rbx
@@ -565,7 +616,7 @@ _Z7test_pfv:
 	jmp	_ZNSo5flushEv
 	.p2align 4,,10
 	.p2align 3
-.L60:
+.L68:
 	.cfi_restore_state
 	movq	%rbp, %rdi
 	call	_ZNKSt5ctypeIcE13_M_widen_initEv
@@ -573,24 +624,24 @@ _Z7test_pfv:
 	movl	$10, %esi
 	movq	48(%rax), %rax
 	cmpq	$_ZNKSt5ctypeIcE8do_widenEc, %rax
-	je	.L61
+	je	.L69
 	movq	%rbp, %rdi
 	call	*%rax
 	movsbl	%al, %esi
-	jmp	.L61
-.L69:
+	jmp	.L69
+.L77:
 	call	_ZSt16__throw_bad_castv
 	.cfi_endproc
 .LFE9277:
 	.size	_Z7test_pfv, .-_Z7test_pfv
 	.section	.text.unlikely
-.LCOLDE11:
+.LCOLDE12:
 	.text
-.LHOTE11:
+.LHOTE12:
 	.section	.text.unlikely
-.LCOLDB12:
+.LCOLDB13:
 	.text
-.LHOTB12:
+.LHOTB13:
 	.p2align 4,,15
 	.globl	_Z6try_paPvm
 	.type	_Z6try_paPvm, @function
@@ -653,20 +704,22 @@ _Z6try_paPvm:
 .LFE9278:
 	.size	_Z6try_paPvm, .-_Z6try_paPvm
 	.section	.text.unlikely
-.LCOLDE12:
+.LCOLDE13:
 	.text
-.LHOTE12:
+.LHOTE13:
 	.section	.rodata.str1.1
-.LC13:
-	.string	" + "
 .LC14:
-	.string	" -> "
+	.string	" + "
 .LC15:
+	.string	" -> "
+.LC16:
 	.string	" ns"
+.LC17:
+	.string	" <- here"
 	.section	.text.unlikely
-.LCOLDB16:
+.LCOLDB18:
 	.text
-.LHOTB16:
+.LHOTB18:
 	.p2align 4,,15
 	.globl	_Z12test_pa_aslrv
 	.type	_Z12test_pa_aslrv, @function
@@ -696,22 +749,22 @@ _Z12test_pa_aslrv:
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 64
 	movq	p+8(%rip), %r12
-	jmp	.L76
+	jmp	.L88
 	.p2align 4,,10
 	.p2align 3
-.L83:
-	movsbl	67(%r14), %esi
-.L75:
-	movq	%rbx, %rdi
+.L100:
+	movsbl	67(%rbx), %esi
+.L87:
+	movl	$_ZSt4cout, %edi
 	call	_ZNSo3putEc
 	movq	%rax, %rdi
 	call	_ZNSo5flushEv
 	movabsq	$4294967296, %rax
 	addq	%rax, %rbp
-	movabsq	$1099511627776, %rax
+	movabsq	$140737488355328, %rax
 	cmpq	%rax, %rbp
-	je	.L81
-.L76:
+	je	.L98
+.L88:
 	movq	%r13, %rax
 	addq	p+24(%rip), %rax
 	addq	%rbp, %rax
@@ -757,45 +810,45 @@ _Z12test_pa_aslrv:
     cpuid
 # 0 "" 2
 #NO_APP
-	movq	%rsi, clk+64(%rip)
-	subq	clk+56(%rip), %rsi
-	movl	$_ZSt4cout, %edi
+	movq	%rsi, %rbx
+	subq	clk+56(%rip), %rbx
 	movq	_ZSt4cout(%rip), %rax
-	movq	p+24(%rip), %rbx
-	movq	%rsi, clk+48(%rip)
-	movq	-24(%rax), %rdx
-	movq	%rsi, %r14
+	movq	%rsi, clk+64(%rip)
+	movl	$_ZSt4cout, %edi
 	movabsq	$-131941395333120, %rsi
+	movq	p+24(%rip), %r15
+	movq	%rbx, clk+48(%rip)
+	movq	-24(%rax), %rdx
 	movl	_ZSt4cout+24(%rdx), %eax
 	andl	$-75, %eax
 	orl	$8, %eax
 	movl	%eax, _ZSt4cout+24(%rdx)
 	call	_ZNSo9_M_insertImEERSoT_
 	movl	$3, %edx
-	movq	%rax, %r15
-	movl	$.LC13, %esi
-	movq	%rax, %rdi
-	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
-	movq	%r15, %rdi
-	movq	%rbp, %rsi
-	call	_ZNSo9_M_insertImEERSoT_
-	movl	$3, %edx
-	movq	%rax, %r15
-	movl	$.LC13, %esi
-	movq	%rax, %rdi
-	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
-	movq	%rbx, %rsi
-	movq	%r15, %rdi
-	call	_ZNSo9_M_insertImEERSoT_
-	movl	$4, %edx
-	movq	%rax, %rbx
+	movq	%rax, %r14
 	movl	$.LC14, %esi
 	movq	%rax, %rdi
 	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
-	movq	(%rbx), %rax
-	movq	%rbx, %rdx
-	movl	%r14d, %esi
-	movq	%rbx, %rdi
+	movq	%r14, %rdi
+	movq	%rbp, %rsi
+	call	_ZNSo9_M_insertImEERSoT_
+	movl	$3, %edx
+	movq	%rax, %r14
+	movl	$.LC14, %esi
+	movq	%rax, %rdi
+	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
+	movq	%r15, %rsi
+	movq	%r14, %rdi
+	call	_ZNSo9_M_insertImEERSoT_
+	movl	$4, %edx
+	movq	%rax, %r15
+	movl	$.LC15, %esi
+	movq	%rax, %rdi
+	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
+	movq	(%r15), %rax
+	movq	%r15, %rdx
+	movl	%ebx, %esi
+	movq	%r15, %rdi
 	addq	-24(%rax), %rdx
 	movl	24(%rdx), %eax
 	andl	$-75, %eax
@@ -803,31 +856,82 @@ _Z12test_pa_aslrv:
 	movl	%eax, 24(%rdx)
 	call	_ZNSolsEi
 	movl	$3, %edx
-	movq	%rax, %rbx
-	movl	$.LC15, %esi
+	movl	$.LC16, %esi
 	movq	%rax, %rdi
 	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
-	movq	(%rbx), %rax
+	cmpl	$149, %ebx
+	jle	.L99
+	movq	_ZSt4cout(%rip), %rax
 	movq	-24(%rax), %rax
-	movq	240(%rbx,%rax), %r14
-	testq	%r14, %r14
-	je	.L82
-	cmpb	$0, 56(%r14)
-	jne	.L83
-	movq	%r14, %rdi
+	movq	_ZSt4cout+240(%rax), %rbx
+	testq	%rbx, %rbx
+	je	.L85
+	cmpb	$0, 56(%rbx)
+	jne	.L100
+	movq	%rbx, %rdi
 	call	_ZNKSt5ctypeIcE13_M_widen_initEv
-	movq	(%r14), %rax
+	movq	(%rbx), %rax
 	movl	$10, %esi
 	movq	48(%rax), %rax
 	cmpq	$_ZNKSt5ctypeIcE8do_widenEc, %rax
-	je	.L75
-	movq	%r14, %rdi
+	je	.L87
+	movq	%rbx, %rdi
 	call	*%rax
 	movsbl	%al, %esi
-	jmp	.L75
+	jmp	.L87
 	.p2align 4,,10
 	.p2align 3
-.L81:
+.L99:
+	movl	$8, %edx
+	movl	$.LC17, %esi
+	movl	$_ZSt4cout, %edi
+	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
+	movq	_ZSt4cout(%rip), %rax
+	movq	-24(%rax), %rax
+	movq	_ZSt4cout+240(%rax), %rbx
+	testq	%rbx, %rbx
+	je	.L85
+	cmpb	$0, 56(%rbx)
+	je	.L83
+	movsbl	67(%rbx), %esi
+.L84:
+	movl	$_ZSt4cout, %edi
+	call	_ZNSo3putEc
+	addq	$8, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	movq	%rax, %rdi
+	popq	%rbx
+	.cfi_def_cfa_offset 48
+	popq	%rbp
+	.cfi_def_cfa_offset 40
+	popq	%r12
+	.cfi_def_cfa_offset 32
+	popq	%r13
+	.cfi_def_cfa_offset 24
+	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
+	jmp	_ZNSo5flushEv
+	.p2align 4,,10
+	.p2align 3
+.L83:
+	.cfi_restore_state
+	movq	%rbx, %rdi
+	call	_ZNKSt5ctypeIcE13_M_widen_initEv
+	movq	(%rbx), %rax
+	movl	$10, %esi
+	movq	48(%rax), %rax
+	cmpq	$_ZNKSt5ctypeIcE8do_widenEc, %rax
+	je	.L84
+	movq	%rbx, %rdi
+	call	*%rax
+	movsbl	%al, %esi
+	jmp	.L84
+	.p2align 4,,10
+	.p2align 3
+.L98:
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 56
@@ -844,29 +948,29 @@ _Z12test_pa_aslrv:
 	popq	%r15
 	.cfi_def_cfa_offset 8
 	ret
-.L82:
+.L85:
 	.cfi_restore_state
 	call	_ZSt16__throw_bad_castv
 	.cfi_endproc
 .LFE9279:
 	.size	_Z12test_pa_aslrv, .-_Z12test_pa_aslrv
 	.section	.text.unlikely
-.LCOLDE16:
+.LCOLDE18:
 	.text
-.LHOTE16:
+.LHOTE18:
 	.section	.rodata.str1.1
-.LC17:
-	.string	"- baseline test -"
-.LC18:
-	.string	"no prefetch: "
 .LC19:
-	.string	"prefetch:    "
+	.string	"- baseline test -"
 .LC20:
+	.string	"no prefetch: "
+.LC21:
+	.string	"prefetch:    "
+.LC22:
 	.string	"- address test -"
 	.section	.text.unlikely
-.LCOLDB21:
+.LCOLDB23:
 	.section	.text.startup,"ax",@progbits
-.LHOTB21:
+.LHOTB23:
 	.p2align 4,,15
 	.globl	main
 	.type	main, @function
@@ -900,30 +1004,28 @@ main:
 	movq	(%rsp), %rdi
 	leaq	16(%rsp), %rax
 	cmpq	%rax, %rdi
-	je	.L85
+	je	.L102
 	call	_ZdlPv
-.L85:
+.L102:
 	movl	$17, %edx
-	movl	$.LC17, %esi
+	movl	$.LC19, %esi
 	movl	$_ZSt4cout, %edi
 .LEHB5:
 	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
-	movl	$_ZSt4cout, %edi
-	call	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_
-	movl	$.LC18, %esi
+	call	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.constprop.24
+	movl	$.LC20, %esi
 	movl	$_ZSt4cout, %edi
 	call	_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
 	call	_Z10test_no_pfv
-	movl	$.LC19, %esi
+	movl	$.LC21, %esi
 	movl	$_ZSt4cout, %edi
 	call	_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
 	call	_Z7test_pfv
 	movl	$16, %edx
-	movl	$.LC20, %esi
+	movl	$.LC22, %esi
 	movl	$_ZSt4cout, %edi
 	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
-	movl	$_ZSt4cout, %edi
-	call	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_
+	call	_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.constprop.24
 	call	_Z12test_pa_aslrv
 	movl	$p, %edi
 	call	_ZN4Page5resetEv
@@ -934,15 +1036,15 @@ main:
 	popq	%rbx
 	.cfi_def_cfa_offset 8
 	ret
-.L88:
+.L105:
 	.cfi_restore_state
 	movq	(%rsp), %rdi
 	leaq	16(%rsp), %rdx
 	movq	%rax, %rbx
 	cmpq	%rdx, %rdi
-	je	.L87
+	je	.L104
 	call	_ZdlPv
-.L87:
+.L104:
 	movq	%rbx, %rdi
 	call	_Unwind_Resume
 .LEHE5:
@@ -961,7 +1063,7 @@ main:
 	.uleb128 0
 	.uleb128 .LEHB4-.LFB9280
 	.uleb128 .LEHE4-.LEHB4
-	.uleb128 .L88-.LFB9280
+	.uleb128 .L105-.LFB9280
 	.uleb128 0
 	.uleb128 .LEHB5-.LFB9280
 	.uleb128 .LEHE5-.LEHB5
@@ -971,13 +1073,13 @@ main:
 	.section	.text.startup
 	.size	main, .-main
 	.section	.text.unlikely
-.LCOLDE21:
+.LCOLDE23:
 	.section	.text.startup
-.LHOTE21:
+.LHOTE23:
 	.section	.text.unlikely
-.LCOLDB22:
+.LCOLDB24:
 	.section	.text.startup
-.LHOTB22:
+.LHOTB24:
 	.p2align 4,,15
 	.type	_GLOBAL__sub_I_p, @function
 _GLOBAL__sub_I_p:
@@ -1006,9 +1108,9 @@ _GLOBAL__sub_I_p:
 .LFE9924:
 	.size	_GLOBAL__sub_I_p, .-_GLOBAL__sub_I_p
 	.section	.text.unlikely
-.LCOLDE22:
+.LCOLDE24:
 	.section	.text.startup
-.LHOTE22:
+.LHOTE24:
 	.section	.init_array,"aw"
 	.align 8
 	.quad	_GLOBAL__sub_I_p

